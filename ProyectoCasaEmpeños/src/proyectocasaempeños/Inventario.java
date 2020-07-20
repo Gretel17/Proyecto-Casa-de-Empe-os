@@ -74,7 +74,7 @@ public class Inventario extends javax.swing.JFrame {
         jPanel1.add(lblNombreProducto, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 85, -1, -1));
 
         cmbEstado.setFont(new java.awt.Font("Century Gothic", 0, 14)); // NOI18N
-        cmbEstado.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Empeñado", "Disponible para venta", "Ahogado" }));
+        cmbEstado.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Ahogado", "Disponible para venta" }));
         jPanel1.add(cmbEstado, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 80, 170, -1));
 
         txtNombreProducto.setFont(new java.awt.Font("Century Gothic", 0, 14)); // NOI18N
