@@ -5,6 +5,12 @@
  */
 package proyectocasaempeños;
 
+
+
+import java.text.SimpleDateFormat;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author luisf
@@ -17,8 +23,22 @@ public class Inventario extends javax.swing.JFrame {
     public Inventario() {
         initComponents();
         this.setLocationRelativeTo(null);
+        this.txtNombreProducto.setTransferHandler(null);
+        this.txtPrecioVenta.setTransferHandler(null);
+        this.txtCantidad.setTransferHandler(null);
+        con.llenarCmbEstadoObjetos(cmbEstado);
+        con.llenarTablaInventario(tblInventario);
+        this.tblInventario.getColumn(tblInventario.getColumnName(0)).setWidth(0);
+        //this.tblInventario.getColumn(0).setWidth(0);
     }
 
+    Conexion con = new Conexion();
+    java.util.Date d = new java.util.Date();  
+    SimpleDateFormat plantilla = new SimpleDateFormat("yyyy/MM/dd H:mm:ss");
+    //java.sql.Date fechaActual = new java.sql.Date(d.getTime());
+    String fechaActual = plantilla.format(d.getTime());
+    
+    Integer codigo;
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -43,10 +63,10 @@ public class Inventario extends javax.swing.JFrame {
         lblBuscar = new javax.swing.JLabel();
         txtBuscar = new javax.swing.JTextField();
         btnCancelar = new javax.swing.JButton();
-        btnConsultar1 = new javax.swing.JButton();
-        btnModificar1 = new javax.swing.JButton();
+        btnConsultar = new javax.swing.JButton();
+        btnModificar = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        tblInventario = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Consultar/modificar objetos");
@@ -74,16 +94,19 @@ public class Inventario extends javax.swing.JFrame {
         jPanel1.add(lblNombreProducto, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 85, -1, -1));
 
         cmbEstado.setFont(new java.awt.Font("Century Gothic", 0, 14)); // NOI18N
-        cmbEstado.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Ahogado", "Disponible para venta" }));
+        cmbEstado.setEnabled(false);
         jPanel1.add(cmbEstado, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 80, 170, -1));
 
         txtNombreProducto.setFont(new java.awt.Font("Century Gothic", 0, 14)); // NOI18N
+        txtNombreProducto.setEnabled(false);
         jPanel1.add(txtNombreProducto, new org.netbeans.lib.awtextra.AbsoluteConstraints(510, 80, 180, -1));
 
         txtPrecioVenta.setFont(new java.awt.Font("Century Gothic", 0, 14)); // NOI18N
+        txtPrecioVenta.setEnabled(false);
         jPanel1.add(txtPrecioVenta, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 120, 100, -1));
 
         txtCantidad.setFont(new java.awt.Font("Century Gothic", 0, 14)); // NOI18N
+        txtCantidad.setEnabled(false);
         jPanel1.add(txtCantidad, new org.netbeans.lib.awtextra.AbsoluteConstraints(510, 120, 100, -1));
 
         lblFiltro.setFont(new java.awt.Font("Century Gothic", 1, 14)); // NOI18N
@@ -103,6 +126,7 @@ public class Inventario extends javax.swing.JFrame {
 
         btnCancelar.setFont(new java.awt.Font("Century Gothic", 1, 14)); // NOI18N
         btnCancelar.setText("Cancelar");
+        btnCancelar.setEnabled(false);
         btnCancelar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnCancelarActionPerformed(evt);
@@ -110,46 +134,54 @@ public class Inventario extends javax.swing.JFrame {
         });
         jPanel1.add(btnCancelar, new org.netbeans.lib.awtextra.AbsoluteConstraints(648, 167, -1, 30));
 
-        btnConsultar1.setFont(new java.awt.Font("Century Gothic", 1, 14)); // NOI18N
-        btnConsultar1.setText("Consultar");
-        btnConsultar1.addActionListener(new java.awt.event.ActionListener() {
+        btnConsultar.setFont(new java.awt.Font("Century Gothic", 1, 14)); // NOI18N
+        btnConsultar.setText("Consultar");
+        btnConsultar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnConsultar1ActionPerformed(evt);
+                btnConsultarActionPerformed(evt);
             }
         });
-        jPanel1.add(btnConsultar1, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 167, -1, 30));
+        jPanel1.add(btnConsultar, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 167, -1, 30));
 
-        btnModificar1.setFont(new java.awt.Font("Century Gothic", 1, 14)); // NOI18N
-        btnModificar1.setText("Modificar");
-        btnModificar1.setMinimumSize(new java.awt.Dimension(957, 27));
-        btnModificar1.addActionListener(new java.awt.event.ActionListener() {
+        btnModificar.setFont(new java.awt.Font("Century Gothic", 1, 14)); // NOI18N
+        btnModificar.setText("Modificar");
+        btnModificar.setEnabled(false);
+        btnModificar.setMinimumSize(new java.awt.Dimension(957, 27));
+        btnModificar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnModificar1ActionPerformed(evt);
+                btnModificarActionPerformed(evt);
             }
         });
-        jPanel1.add(btnModificar1, new org.netbeans.lib.awtextra.AbsoluteConstraints(543, 167, -1, 30));
+        jPanel1.add(btnModificar, new org.netbeans.lib.awtextra.AbsoluteConstraints(543, 167, -1, 30));
 
-        jTable1.setFont(new java.awt.Font("Century Gothic", 0, 14)); // NOI18N
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        tblInventario.setFont(new java.awt.Font("Century Gothic", 0, 14)); // NOI18N
+        tblInventario.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
             new String [] {
-                "Estado", "Nombre", "Cantidad disponible", "Precio venta"
+                "Código", "Estado", "Nombre", "Cantidad disponible", "Precio venta"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, true, true
+                false, false, false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
             }
         });
-        jScrollPane1.setViewportView(jTable1);
-        if (jTable1.getColumnModel().getColumnCount() > 0) {
-            jTable1.getColumnModel().getColumn(0).setPreferredWidth(50);
-            jTable1.getColumnModel().getColumn(1).setPreferredWidth(150);
+        tblInventario.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tblInventarioMouseClicked(evt);
+            }
+        });
+        jScrollPane1.setViewportView(tblInventario);
+        if (tblInventario.getColumnModel().getColumnCount() > 0) {
+            tblInventario.getColumnModel().getColumn(0).setResizable(false);
+            tblInventario.getColumnModel().getColumn(0).setPreferredWidth(0);
+            tblInventario.getColumnModel().getColumn(1).setPreferredWidth(50);
+            tblInventario.getColumnModel().getColumn(2).setPreferredWidth(150);
         }
 
         jPanel1.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 210, 730, 210));
@@ -168,17 +200,65 @@ public class Inventario extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void Clear_Table(){
+        DefaultTableModel modelo = (DefaultTableModel) tblInventario.getModel();
+        for (int i = 0; i < tblInventario.getRowCount(); i++) {
+            modelo.removeRow(i);
+            i-=1;
+        }
+    }
+    
     private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
-        // TODO add your handling code here:
+        this.txtNombreProducto.setText(null);
+        this.txtPrecioVenta.setText(null);
+        this.txtCantidad.setText(null);
+        this.cmbEstado.setEnabled(false);
+        this.txtNombreProducto.setEnabled(false);
+        this.txtPrecioVenta.setEnabled(false);
+        this.txtCantidad.setEnabled(false);
+        this.btnModificar.setEnabled(false);
+        this.btnCancelar.setEnabled(false);
+        this.tblInventario.clearSelection();
     }//GEN-LAST:event_btnCancelarActionPerformed
 
-    private void btnConsultar1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConsultar1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnConsultar1ActionPerformed
+    private void btnConsultarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConsultarActionPerformed
+        Clear_Table();
+        con.ConsultarTablaInventario(tblInventario, this.cmbFiltro.getSelectedItem().toString(), this.txtBuscar.getText());
+    }//GEN-LAST:event_btnConsultarActionPerformed
 
-    private void btnModificar1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnModificar1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnModificar1ActionPerformed
+    private void btnModificarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnModificarActionPerformed
+        Clear_Table();
+        con.modificar(this.txtNombreProducto.getText(), Integer.parseInt(this.txtCantidad.getText()), Integer.parseInt(this.txtPrecioVenta.getText()), con.obtenerCodigoCmbEstadoObjetos(this.cmbEstado.getSelectedItem().toString())/*this.cmbEstado.getSelectedIndex()+6*/, "luis", this.fechaActual, this.codigo);
+        con.llenarTablaInventario(tblInventario);
+        this.txtNombreProducto.setText(null);
+        this.txtPrecioVenta.setText(null);
+        this.txtCantidad.setText(null);
+        this.cmbEstado.setEnabled(false);
+        this.txtNombreProducto.setEnabled(false);
+        this.txtPrecioVenta.setEnabled(false);
+        this.txtCantidad.setEnabled(false);
+        this.btnModificar.setEnabled(false);
+        this.btnCancelar.setEnabled(false);
+    }//GEN-LAST:event_btnModificarActionPerformed
+
+    private void tblInventarioMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblInventarioMouseClicked
+        Integer fila = tblInventario.getSelectedRow();
+        if(fila>=0){
+            this.codigo= Integer.parseInt(tblInventario.getValueAt(fila, 0).toString());
+            this.cmbEstado.setSelectedItem(tblInventario.getValueAt(fila, 1).toString());
+            this.txtNombreProducto.setText(tblInventario.getValueAt(fila, 2).toString());
+            this.txtCantidad.setText(tblInventario.getValueAt(fila, 3).toString());           
+            this.txtPrecioVenta.setText(tblInventario.getValueAt(fila, 4).toString());
+        }else{
+            JOptionPane.showMessageDialog(null, "No ha seleccionado ninguna fila para modificar");
+        }
+        this.cmbEstado.setEnabled(true);
+        this.txtNombreProducto.setEnabled(true);
+        this.txtPrecioVenta.setEnabled(true);
+        this.txtCantidad.setEnabled(true);
+        this.btnModificar.setEnabled(true);
+        this.btnCancelar.setEnabled(true);
+    }//GEN-LAST:event_tblInventarioMouseClicked
 
     /**
      * @param args the command line arguments
@@ -217,13 +297,12 @@ public class Inventario extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCancelar;
-    private javax.swing.JButton btnConsultar1;
-    private javax.swing.JButton btnModificar1;
+    private javax.swing.JButton btnConsultar;
+    private javax.swing.JButton btnModificar;
     private javax.swing.JComboBox<String> cmbEstado;
     private javax.swing.JComboBox<String> cmbFiltro;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
     private javax.swing.JLabel lblBuscar;
     private javax.swing.JLabel lblCantidad;
     private javax.swing.JLabel lblEstado;
@@ -231,6 +310,7 @@ public class Inventario extends javax.swing.JFrame {
     private javax.swing.JLabel lblNombreProducto;
     private javax.swing.JLabel lblPrecio;
     private javax.swing.JLabel lblTitulo;
+    private javax.swing.JTable tblInventario;
     private javax.swing.JTextField txtBuscar;
     private javax.swing.JTextField txtCantidad;
     private javax.swing.JTextField txtNombreProducto;
