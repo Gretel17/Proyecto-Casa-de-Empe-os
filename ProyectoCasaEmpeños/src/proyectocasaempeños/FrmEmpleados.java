@@ -5,7 +5,13 @@
  */
 package proyectocasaempeños;
 
+import com.toedter.calendar.JTextFieldDateEditor;
 import java.sql.Date;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumnModel;
 
 /**
  *
@@ -13,16 +19,25 @@ import java.sql.Date;
  */
 public class FrmEmpleados extends javax.swing.JFrame {
 
-    /**
-     * Creates new form FrmEmpleados
-     */
+    
+    
     public FrmEmpleados() {
         initComponents();
+        this.setLocationRelativeTo(null);
         Conexion con = new Conexion();
         con.LlenarComboboxPuestos(this.cmbPuesto);
         con.LlenarComboboxEstados(this.cmbEstado);
-        //con.ConsultarEmpleados(tableEmpleados);
+        con.ConsultarEmpleados(tableEmpleados);
+        this.tableEmpleados.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        con.AjustarAutomaticamenteAnchoColumna(tableEmpleados);
+        JTextFieldDateEditor editor = (JTextFieldDateEditor) this.fecha_nacimiento_datechooser.getDateEditor();
+        editor.setEditable(false);
+        this.DeshabilitarCopyPaste();
+        
+        this.OcultarColumnas();
     }
+    
+    int Id_empleado; 
     
     public void LimpiarTxtFields()
     {
@@ -35,9 +50,36 @@ public class FrmEmpleados extends javax.swing.JFrame {
         this.txtDireccion.setText(null);
         this.txtUsuario.setText(null);
         this.txtContraseña.setText(null);
-        this.cmbEstado.setSelectedIndex(0);
         this.cmbPuesto.setSelectedIndex(0);
+        this.cmbEstado.setSelectedIndex(0);
         this.txtSalario.setText(null);
+    }
+    
+    private void DeshabilitarCopyPaste()
+    {
+        this.txtIdentidad.setTransferHandler(null);
+        this.txtNombre.setTransferHandler(null);
+        this.txtApellido.setTransferHandler(null);
+        this.txtUsuario.setTransferHandler(null);
+        this.txtContraseña.setTransferHandler(null);
+        this.txtCorreo_electronico.setTransferHandler(null);
+        this.txtDireccion.setTransferHandler(null);
+        this.txtTelefono.setTransferHandler(null);
+        this.txtSalario.setTransferHandler(null);
+    }
+    
+    private void RefrescarTable()
+    {
+        DefaultTableModel model = (DefaultTableModel) this.tableEmpleados.getModel();
+        model.setRowCount(0);
+        Conexion con = new Conexion();
+        con.ConsultarEmpleados(this.tableEmpleados);
+    }
+    
+    private void OcultarColumnas()
+    {
+        TableColumnModel tcm = this.tableEmpleados.getColumnModel();
+        tcm.removeColumn(tcm.getColumn(0));
     }
 
     /**
@@ -75,11 +117,11 @@ public class FrmEmpleados extends javax.swing.JFrame {
         jLabel12 = new javax.swing.JLabel();
         jLabel13 = new javax.swing.JLabel();
         txtUsuario = new javax.swing.JTextField();
-        txtContraseña = new javax.swing.JTextField();
         txtSalario = new javax.swing.JTextField();
-        cmbEstado = new javax.swing.JComboBox<>();
         jLabel11 = new javax.swing.JLabel();
+        cmbEstado = new javax.swing.JComboBox<>();
         cmbPuesto = new javax.swing.JComboBox<>();
+        txtContraseña = new javax.swing.JPasswordField();
         btnAgregar = new javax.swing.JButton();
         btnEditar = new javax.swing.JButton();
         btnConsultar = new javax.swing.JButton();
@@ -150,6 +192,8 @@ public class FrmEmpleados extends javax.swing.JFrame {
         pnlInformacionPersonalEmpleado.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 240, 240, 100));
 
         fecha_nacimiento_datechooser.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        fecha_nacimiento_datechooser.setMaxSelectableDate(new java.util.Date(1072940509000L));
+        fecha_nacimiento_datechooser.setMinSelectableDate(new java.util.Date(-631123091000L));
         pnlInformacionPersonalEmpleado.add(fecha_nacimiento_datechooser, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 120, 170, -1));
 
         txtNombre.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
@@ -167,11 +211,26 @@ public class FrmEmpleados extends javax.swing.JFrame {
 
             },
             new String [] {
-
+                "ID Empleado", "Identidad", "Nombre", "Apellido", "Fecha de Nacimiento", "Teléfono", "Correo electrónico", "Dirección", "Puesto", "Estado", "Salario", "Fecha de Contratación", "Fecha de Despido"
             }
-        ));
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false, false, false, false, false, false, false, false, false
+            };
 
-        jPanel1.add(jScrollPane3, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 450, 1070, 220));
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        tableEmpleados.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        tableEmpleados.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tableEmpleadosMouseClicked(evt);
+            }
+        });
+        jScrollPane3.setViewportView(tableEmpleados);
+
+        jPanel1.add(jScrollPane3, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 450, 1080, 220));
 
         pnlInformacionUsuarioEmpleado.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Información de usuario para el empleado", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 14))); // NOI18N
         pnlInformacionUsuarioEmpleado.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -195,26 +254,22 @@ public class FrmEmpleados extends javax.swing.JFrame {
         txtUsuario.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         pnlInformacionUsuarioEmpleado.add(txtUsuario, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 40, 148, -1));
 
-        txtContraseña.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
-        txtContraseña.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtContraseñaActionPerformed(evt);
-            }
-        });
-        pnlInformacionUsuarioEmpleado.add(txtContraseña, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 80, 148, -1));
-
         txtSalario.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         pnlInformacionUsuarioEmpleado.add(txtSalario, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 160, 100, -1));
-
-        cmbEstado.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
-        pnlInformacionUsuarioEmpleado.add(cmbEstado, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 116, 150, -1));
 
         jLabel11.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         jLabel11.setText("Estado: ");
         pnlInformacionUsuarioEmpleado.add(jLabel11, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 120, -1, -1));
 
+        cmbEstado.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        cmbEstado.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Seleccione un estado" }));
+        cmbEstado.setEnabled(false);
+        pnlInformacionUsuarioEmpleado.add(cmbEstado, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 116, 150, 20));
+
         cmbPuesto.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
-        pnlInformacionUsuarioEmpleado.add(cmbPuesto, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 118, 150, -1));
+        cmbPuesto.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Seleccione un puesto" }));
+        pnlInformacionUsuarioEmpleado.add(cmbPuesto, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 120, 150, -1));
+        pnlInformacionUsuarioEmpleado.add(txtContraseña, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 80, 150, -1));
 
         jPanel1.add(pnlInformacionUsuarioEmpleado, new org.netbeans.lib.awtextra.AbsoluteConstraints(560, 70, 520, 210));
 
@@ -229,14 +284,30 @@ public class FrmEmpleados extends javax.swing.JFrame {
 
         btnEditar.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         btnEditar.setText("Editar");
+        btnEditar.setEnabled(false);
+        btnEditar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEditarActionPerformed(evt);
+            }
+        });
         jPanel1.add(btnEditar, new org.netbeans.lib.awtextra.AbsoluteConstraints(670, 300, -1, -1));
 
         btnConsultar.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         btnConsultar.setText("Consultar");
+        btnConsultar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnConsultarActionPerformed(evt);
+            }
+        });
         jPanel1.add(btnConsultar, new org.netbeans.lib.awtextra.AbsoluteConstraints(860, 300, -1, -1));
 
         btnCancelar.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         btnCancelar.setText("Cancelar");
+        btnCancelar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCancelarActionPerformed(evt);
+            }
+        });
         jPanel1.add(btnCancelar, new org.netbeans.lib.awtextra.AbsoluteConstraints(760, 300, -1, -1));
         jPanel1.add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 520, -1, -1));
 
@@ -258,20 +329,64 @@ public class FrmEmpleados extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_txtApellidoActionPerformed
 
-    private void txtContraseñaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtContraseñaActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtContraseñaActionPerformed
-
     private void txtNombreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtNombreActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtNombreActionPerformed
 
     private void btnAgregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAgregarActionPerformed
+        
         Conexion con = new Conexion();
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
         con.Mantenimiento_Empleados("insertar", 0, this.txtIdentidad.getText(), this.txtNombre.getText(), this.txtApellido.getText(), this.txtUsuario.getText(), this.txtContraseña.getText(), 
-        Integer.parseInt(this.txtSalario.getText()), this.txtTelefono.getText(), this.txtCorreo_electronico.getText(), this.txtDireccion.getText(), (Date) this.fecha_nacimiento_datechooser.getDate(), WIDTH, WIDTH); 
+        Integer.parseInt(this.txtSalario.getText()), this.txtTelefono.getText(), this.txtCorreo_electronico.getText(), this.txtDireccion.getText(), Date.valueOf(df.format(this.fecha_nacimiento_datechooser.getDate())) , this.cmbPuesto.getSelectedIndex(), this.cmbEstado.getSelectedIndex()); 
+        this.RefrescarTable();
         this.LimpiarTxtFields();
+        
     }//GEN-LAST:event_btnAgregarActionPerformed
+
+    private void tableEmpleadosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tableEmpleadosMouseClicked
+        this.btnEditar.setEnabled(true);
+        this.btnAgregar.setEnabled(false);
+        this.cmbEstado.setEnabled(true);
+        this.txtUsuario.setEnabled(false);
+        this.txtContraseña.setEnabled(false);
+        int seleccion = this.tableEmpleados.rowAtPoint(evt.getPoint()); 
+        this.Id_empleado = Integer.parseInt((String.valueOf(tableEmpleados.getModel().getValueAt(seleccion, 0)))); 
+        this.txtIdentidad.setText(String.valueOf(tableEmpleados.getModel().getValueAt(seleccion, 1)));
+        this.txtNombre.setText(String.valueOf(tableEmpleados.getModel().getValueAt(seleccion, 2)));
+        this.txtApellido.setText(String.valueOf(tableEmpleados.getModel().getValueAt(seleccion, 3)));
+        this.fecha_nacimiento_datechooser.setDate(Date.valueOf(String.valueOf(tableEmpleados.getModel().getValueAt(seleccion, 4))));
+        this.txtTelefono.setText(String.valueOf(tableEmpleados.getModel().getValueAt(seleccion, 5)));
+        this.txtCorreo_electronico.setText(String.valueOf(tableEmpleados.getModel().getValueAt(seleccion, 6)));
+        this.txtDireccion.setText(String.valueOf(tableEmpleados.getModel().getValueAt(seleccion, 7)));
+        this.cmbPuesto.setSelectedItem(String.valueOf(tableEmpleados.getModel().getValueAt(seleccion, 8)));
+        this.cmbEstado.setSelectedItem(String.valueOf(tableEmpleados.getModel().getValueAt(seleccion,9)));
+        this.txtSalario.setText(String.valueOf(tableEmpleados.getModel().getValueAt(seleccion, 10)));
+        
+    }//GEN-LAST:event_tableEmpleadosMouseClicked
+
+    private void btnConsultarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConsultarActionPerformed
+        FrmBusquedaEmpleados busquedaEmpleados = new FrmBusquedaEmpleados();
+        busquedaEmpleados.setVisible(true);
+    }//GEN-LAST:event_btnConsultarActionPerformed
+
+    private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
+        this.btnEditar.setEnabled(false);
+        this.cmbEstado.setEnabled(false);
+        this.txtUsuario.setEnabled(true);
+        this.txtContraseña.setEnabled(true);
+        this.LimpiarTxtFields();
+        this.tableEmpleados.clearSelection();
+        this.btnAgregar.setEnabled(true);
+    }//GEN-LAST:event_btnCancelarActionPerformed
+
+    private void btnEditarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditarActionPerformed
+        Conexion con = new Conexion();
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+        con.Mantenimiento_Empleados("editar", this.Id_empleado, this.txtIdentidad.getText(), this.txtNombre.getText(), this.txtApellido.getText(), null, null, Integer.parseInt(this.txtSalario.getText()), this.txtTelefono.getText(), this.txtCorreo_electronico.getText(), this.txtDireccion.getText(), Date.valueOf(df.format(this.fecha_nacimiento_datechooser.getDate())), this.cmbPuesto.getSelectedIndex(), this.cmbEstado.getSelectedIndex());
+        this.RefrescarTable();
+        this.LimpiarTxtFields();
+    }//GEN-LAST:event_btnEditarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -337,7 +452,7 @@ public class FrmEmpleados extends javax.swing.JFrame {
     private javax.swing.JPanel pnlInformacionUsuarioEmpleado;
     private javax.swing.JTable tableEmpleados;
     private javax.swing.JTextField txtApellido;
-    private javax.swing.JTextField txtContraseña;
+    private javax.swing.JPasswordField txtContraseña;
     private javax.swing.JTextField txtCorreo_electronico;
     private javax.swing.JTextArea txtDireccion;
     private javax.swing.JTextField txtIdentidad;

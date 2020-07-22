@@ -15,7 +15,8 @@ public class ProyectoCasaEmpeños {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        // TODO code application logic here
+        FrmEmpleados empleados = new FrmEmpleados();
+        empleados.setVisible(true);
     }
     
 }

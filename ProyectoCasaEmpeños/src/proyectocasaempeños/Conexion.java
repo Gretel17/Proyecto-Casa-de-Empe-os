@@ -1,6 +1,7 @@
 
 package proyectocasaempeños;
 
+import java.awt.Component;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.Date;
@@ -14,6 +15,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumnModel;
 
 
 public class Conexion 
@@ -81,7 +84,7 @@ public class Conexion
         }
     }
      
-    public void ConsultarEmpleados(JTable tabla_empleados)
+     public void ConsultarEmpleados(JTable tabla_empleados)
     {
         String estado = "";
         
@@ -89,43 +92,56 @@ public class Conexion
         {
             Conexion.con = (com.mysql.jdbc.Connection) DriverManager.getConnection(Conexion.url, Conexion.user, Conexion.pass);
             Conexion.stm = con.createStatement();
-            Conexion.rss = stm.executeQuery("Select * from empleados");
+            Conexion.rss = stm.executeQuery("Select a.id_empleado, a.identidad, a.nombre, a.apellido, a.fecha_nacimiento, a.telefono, a.correo_electronico, a.direccion, b.descripcion, c.descripcion, a.salario, a.fecha_contratacion, a.fecha_despido from empleados a inner join puestos b on a.id_puesto = b.id_puesto inner join estado c on a.id_estado = c.id_estado");
             DefaultTableModel modelo = (DefaultTableModel) tabla_empleados.getModel();
-            
             
             while (rss.next())
             {
-
-                Object [] fila = new Object[15];
-
-                fila[0] = rss.getObject(1);
-                fila[1] = rss.getObject(2);
-                fila[2] = rss.getObject(3);
-                fila[3] = rss.getObject(4);
-
-                modelo.addRow(fila);
+                Object [] fila = new Object[13];
                 
+                for (int i = 0; i<13; i++)
+                {
+                    fila[i] = rss.getObject(i+1);
+                }
+
+                modelo.addRow(fila);              
             }
-            
+                    
             tabla_empleados.setModel(modelo);
-
-            DefaultTableCellRenderer centrado = new DefaultTableCellRenderer();
-            centrado.setHorizontalAlignment(JLabel.CENTER);
             
-            for (int i = 0; i<4; i++)
-            {
-                tabla_empleados.getColumnModel().getColumn(i).setCellRenderer(centrado);
-            }
-
         }
         catch (SQLException e){
             estado = "Error de Conexion: " + e.toString();
             JOptionPane.showMessageDialog(null, estado);
         }
     } 
-      
     
     
+   public void LlenarComboboxEstados(JComboBox estados)
+    {
+        String query = "select * from estado";
+
+        String estado = "";
+        
+        try
+        {
+            Conexion.con = (com.mysql.jdbc.Connection) DriverManager.getConnection(Conexion.url, Conexion.user, Conexion.pass);
+            Conexion.stm = con.createStatement();
+            Conexion.rss = stm.executeQuery(query);
+            
+            while (rss.next())
+            {
+                String dato = rss.getString("descripcion");
+                estados.addItem(dato);
+            }
+        }
+        catch (SQLException e)
+        {
+            estado = "Error de Conexion: " + e.toString();
+            JOptionPane.showMessageDialog(null, estado);
+        }
+    }
+   
     public void LlenarComboboxPuestos(JComboBox puestos)
     {
         String query = "select * from puestos";
@@ -151,30 +167,58 @@ public class Conexion
         }
     }
     
-    public void LlenarComboboxEstados(JComboBox estados)
+    public void AjustarAutomaticamenteAnchoColumna(JTable tabla) 
     {
-        String query = "select * from estado";
-
+        final TableColumnModel columnModel = tabla.getColumnModel();
+        for (int columna = 0; columna < tabla.getColumnCount(); columna++) {
+            int ancho = 100; //ancho minimo 
+            for (int fila = 0; fila < tabla.getRowCount(); fila++) {
+                TableCellRenderer renderer = tabla.getCellRenderer(fila, columna);
+                Component comp = tabla.prepareRenderer(renderer, fila, columna);
+                ancho = Math.max(comp.getPreferredSize().width +1 , ancho);
+            }
+            if(ancho > 300)
+                ancho=300;
+            columnModel.getColumn(columna).setPreferredWidth(ancho);
+        }
+    }
+    
+    public void BarraBusqueda(String nombre_tabla, String texto, JTable tabla, int columnas)
+    {
         String estado = "";
         
         try
         {
-            Conexion.con = (com.mysql.jdbc.Connection) DriverManager.getConnection(Conexion.url, Conexion.user, Conexion.pass);
-            Conexion.stm = con.createStatement();
-            Conexion.rss = stm.executeQuery(query);
+            String query;
+            Conexion.con = (Connection) DriverManager.getConnection(Conexion.url, Conexion.user, Conexion.pass);
+            query = "{CALL Busqueda(?, ?)}";
+            CallableStatement cs = con.prepareCall(query);
+            cs.setString(1, nombre_tabla);
+            cs.setString(2, texto);
+            Conexion.rss = cs.executeQuery();
+            
+            DefaultTableModel modelo = (DefaultTableModel) tabla.getModel();
+            modelo.setRowCount(0);
             
             while (rss.next())
             {
-                String dato = rss.getString("descripcion");
-                estados.addItem(dato);
+                Object [] fila = new Object[columnas];
+                
+                for (int i = 0; i<columnas; i++)
+                {
+                    fila[i] = rss.getObject(i+1);
+                }
+
+                modelo.addRow(fila);              
             }
+            
+            tabla.setModel(modelo);
+
         }
-        catch (SQLException e)
-        {
+        catch (SQLException e){
             estado = "Error de Conexion: " + e.toString();
             JOptionPane.showMessageDialog(null, estado);
         }
+        
     }
-     
-    
 }
