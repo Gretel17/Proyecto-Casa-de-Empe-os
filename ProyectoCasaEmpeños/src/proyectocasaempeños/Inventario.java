@@ -6,7 +6,7 @@
 package proyectocasaempeños;
 
 
-
+//inventarioo
 import java.awt.event.KeyEvent;
 import java.text.SimpleDateFormat;
 import javax.swing.JOptionPane;

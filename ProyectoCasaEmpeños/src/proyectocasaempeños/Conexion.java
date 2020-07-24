@@ -495,6 +495,91 @@ public class Conexion
             JOptionPane.showMessageDialog(null, estado); 
         } 
     }
+     
+     
+     
+      public boolean ValidarIngresarCamposRepetidosClientes(String identidad, String nombre, String apellido, String correo)
+    {
+        String estado = "";
+        boolean verificador = false;
+        
+        try
+        {
+            Conexion.con = (com.mysql.jdbc.Connection) DriverManager.getConnection(Conexion.url, Conexion.user, Conexion.pass);
+            Conexion.stm = con.createStatement();
+            Conexion.rss = stm.executeQuery("select * from clientes");
+            
+            while (rss.next())
+            {
+                if (identidad.equals(rss.getString("identidad")))
+                {
+                    JOptionPane.showMessageDialog(null, "El numero de indentidad ingresado ya se encuentra registrado", "Error", JOptionPane.ERROR_MESSAGE);
+                    verificador = true;
+                }
+                if (nombre.toUpperCase().equals(rss.getString("nombre").toUpperCase()) && apellido.toUpperCase().equals(rss.getString("apellido").toUpperCase()))
+                {
+                    JOptionPane.showMessageDialog(null, "El nombre completo ingresado ya se encuentra registrado", "Error", JOptionPane.ERROR_MESSAGE);
+                    verificador = true;
+                }
+                
+                if (correo.equals(rss.getString("correo_electronico")))
+                {
+                    JOptionPane.showMessageDialog(null, "El correo electrónico ingresado ya se encuentran registrado", "Error", JOptionPane.ERROR_MESSAGE);
+                    verificador = true;
+                }
+            }
+        }
+        catch (SQLException e){
+            estado = "Error de Conexion: " + e.toString();
+            JOptionPane.showMessageDialog(null, estado);
+        } catch (Exception ex) {
+            Logger.getLogger(Conexion.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        return verificador;
+    }
+      
+    public boolean ValidarEditarCamposRepetidosClientes(Integer id, String identidad, String nombre, String apellido, String correo)
+    {
+        String estado = "";
+        boolean verificador = false;
+        
+        try
+        {
+            Conexion.con = (com.mysql.jdbc.Connection) DriverManager.getConnection(Conexion.url, Conexion.user, Conexion.pass);
+            Conexion.stm = con.createStatement();
+            Conexion.rss = stm.executeQuery("select * from clientes where id_cliente != "+id);
+            
+            while (rss.next())
+            {
+                if (identidad.equals(rss.getString("identidad")))
+                {
+                    JOptionPane.showMessageDialog(null, "El numero de indentidad ingresado ya se encuentra registrado", "Error", JOptionPane.ERROR_MESSAGE);
+                    verificador = true;
+                }
+                if (nombre.toUpperCase().equals(rss.getString("nombre").toUpperCase()) && apellido.toUpperCase().equals(rss.getString("apellido").toUpperCase()))
+                {
+                    JOptionPane.showMessageDialog(null, "El nombre completo ingresado ya se encuentra registrado", "Error", JOptionPane.ERROR_MESSAGE);
+                    verificador = true;
+                }
+                
+                
+                if (correo.equals(rss.getString("correo_electronico")))
+                {
+                    JOptionPane.showMessageDialog(null, "El correo electrónico ingresado ya se encuentran registrado", "Error", JOptionPane.ERROR_MESSAGE);
+                    verificador = true;
+                }
+            }
+        }
+        catch (SQLException e){
+            estado = "Error de Conexion: " + e.toString();
+            JOptionPane.showMessageDialog(null, estado);
+        } catch (Exception ex) {
+            Logger.getLogger(Conexion.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        return verificador;
+    }
 
     
     public int obtenerCodigoCmbEstadoObjetos(String estadoObjeto) {
