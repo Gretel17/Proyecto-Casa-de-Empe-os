@@ -5,6 +5,7 @@
  */
 package proyectocasaempeños;
 
+import java.sql.Date;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
@@ -22,7 +23,6 @@ public class FrmBusquedaEmpleados extends javax.swing.JFrame {
         initComponents();
         this.setLocationRelativeTo(null);
         Conexion con = new Conexion();
-        con.ConsultarEmpleados(tableEmpleados);
         con.AjustarAutomaticamenteAnchoColumna(tableEmpleados);
         this.tableEmpleados.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         this.OcultarColumnas();
@@ -34,7 +34,8 @@ public class FrmBusquedaEmpleados extends javax.swing.JFrame {
         TableColumnModel tcm = this.tableEmpleados.getColumnModel();
         tcm.removeColumn(tcm.getColumn(0));
     }
-
+    
+    String Filtro = "";
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -45,14 +46,28 @@ public class FrmBusquedaEmpleados extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        btngroupVisualizar = new javax.swing.ButtonGroup();
         jPanel1 = new javax.swing.JPanel();
         jScrollPane3 = new javax.swing.JScrollPane();
         tableEmpleados = new javax.swing.JTable();
         jLabel2 = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
         txtBusqueda = new javax.swing.JTextField();
+        btnLimpiar = new javax.swing.JButton();
+        btnModificar = new javax.swing.JButton();
+        btnRegresar = new javax.swing.JButton();
+        jLabel3 = new javax.swing.JLabel();
+        rdbTodos = new javax.swing.JRadioButton();
+        rdbDespedidos = new javax.swing.JRadioButton();
+        rdbVacaciones = new javax.swing.JRadioButton();
+        rdbActivos = new javax.swing.JRadioButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosed(java.awt.event.WindowEvent evt) {
+                formWindowClosed(evt);
+            }
+        });
 
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
@@ -65,7 +80,7 @@ public class FrmBusquedaEmpleados extends javax.swing.JFrame {
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false, false, false, false, false, false, false
+                false, false, false, false, false, false, false, false, false, false, false, false, true
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -73,9 +88,14 @@ public class FrmBusquedaEmpleados extends javax.swing.JFrame {
             }
         });
         tableEmpleados.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        tableEmpleados.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tableEmpleadosMouseClicked(evt);
+            }
+        });
         jScrollPane3.setViewportView(tableEmpleados);
 
-        jPanel1.add(jScrollPane3, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 130, 1040, 460));
+        jPanel1.add(jScrollPane3, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 160, 960, 430));
 
         jLabel2.setFont(new java.awt.Font("Century Gothic", 1, 18)); // NOI18N
         jLabel2.setText("Consultar Empleados");
@@ -83,9 +103,10 @@ public class FrmBusquedaEmpleados extends javax.swing.JFrame {
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         jLabel1.setText("Buscar: ");
-        jPanel1.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 80, -1, -1));
+        jPanel1.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 110, -1, -1));
 
         txtBusqueda.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        txtBusqueda.setEnabled(false);
         txtBusqueda.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtBusquedaActionPerformed(evt);
@@ -96,7 +117,76 @@ public class FrmBusquedaEmpleados extends javax.swing.JFrame {
                 txtBusquedaKeyTyped(evt);
             }
         });
-        jPanel1.add(txtBusqueda, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 80, 580, -1));
+        jPanel1.add(txtBusqueda, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 110, 600, -1));
+
+        btnLimpiar.setText("Limpiar");
+        btnLimpiar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnLimpiarActionPerformed(evt);
+            }
+        });
+        jPanel1.add(btnLimpiar, new org.netbeans.lib.awtextra.AbsoluteConstraints(700, 110, -1, -1));
+
+        btnModificar.setText("Editar");
+        btnModificar.setEnabled(false);
+        btnModificar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnModificarActionPerformed(evt);
+            }
+        });
+        jPanel1.add(btnModificar, new org.netbeans.lib.awtextra.AbsoluteConstraints(790, 110, -1, -1));
+
+        btnRegresar.setText("Regresar");
+        btnRegresar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRegresarActionPerformed(evt);
+            }
+        });
+        jPanel1.add(btnRegresar, new org.netbeans.lib.awtextra.AbsoluteConstraints(880, 110, -1, -1));
+
+        jLabel3.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        jLabel3.setText("Visuailizar: ");
+        jPanel1.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 70, -1, -1));
+
+        btngroupVisualizar.add(rdbTodos);
+        rdbTodos.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        rdbTodos.setText("Todos los empleados");
+        rdbTodos.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                rdbTodosActionPerformed(evt);
+            }
+        });
+        jPanel1.add(rdbTodos, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 68, -1, -1));
+
+        btngroupVisualizar.add(rdbDespedidos);
+        rdbDespedidos.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        rdbDespedidos.setText("Empleados Despedidos");
+        rdbDespedidos.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                rdbDespedidosActionPerformed(evt);
+            }
+        });
+        jPanel1.add(rdbDespedidos, new org.netbeans.lib.awtextra.AbsoluteConstraints(560, 68, -1, 20));
+
+        btngroupVisualizar.add(rdbVacaciones);
+        rdbVacaciones.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        rdbVacaciones.setText("Empleados en Vacaciones");
+        rdbVacaciones.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                rdbVacacionesActionPerformed(evt);
+            }
+        });
+        jPanel1.add(rdbVacaciones, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 68, -1, 20));
+
+        btngroupVisualizar.add(rdbActivos);
+        rdbActivos.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        rdbActivos.setText("Empeados Activos");
+        rdbActivos.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                rdbActivosActionPerformed(evt);
+            }
+        });
+        jPanel1.add(rdbActivos, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 68, -1, -1));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -114,12 +204,97 @@ public class FrmBusquedaEmpleados extends javax.swing.JFrame {
 
     private void txtBusquedaKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtBusquedaKeyTyped
         Conexion con = new Conexion();
-        con.BarraBusqueda("empleados", this.txtBusqueda.getText(), this.tableEmpleados, 13);
+        con.BarraBusqueda("empleados", this.txtBusqueda.getText(), this.tableEmpleados, 13, this.Filtro);
     }//GEN-LAST:event_txtBusquedaKeyTyped
 
     private void txtBusquedaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtBusquedaActionPerformed
-        // TODO add your handling code here:
+        
     }//GEN-LAST:event_txtBusquedaActionPerformed
+
+    private void btnLimpiarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLimpiarActionPerformed
+        this.txtBusqueda.setText(null);
+    }//GEN-LAST:event_btnLimpiarActionPerformed
+
+    private void btnModificarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnModificarActionPerformed
+        this.dispose();
+    }//GEN-LAST:event_btnModificarActionPerformed
+
+    private void tableEmpleadosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tableEmpleadosMouseClicked
+
+        CompartirDatosEmpleado compartir = new CompartirDatosEmpleado();
+        int seleccion = this.tableEmpleados.rowAtPoint(evt.getPoint()); 
+        CompartirDatosEmpleado.id_empleado = Integer.parseInt((String.valueOf(tableEmpleados.getModel().getValueAt(seleccion, 0)))); 
+        CompartirDatosEmpleado.identidad = (String.valueOf(tableEmpleados.getModel().getValueAt(seleccion, 1)));
+        CompartirDatosEmpleado.nombre = (String.valueOf(tableEmpleados.getModel().getValueAt(seleccion, 2)));
+        CompartirDatosEmpleado.apellido = (String.valueOf(tableEmpleados.getModel().getValueAt(seleccion, 3)));
+        CompartirDatosEmpleado.fecha_nacimiento = (Date.valueOf(String.valueOf(tableEmpleados.getModel().getValueAt(seleccion, 4))));
+        CompartirDatosEmpleado.telefono = (String.valueOf(tableEmpleados.getModel().getValueAt(seleccion, 5)));
+        CompartirDatosEmpleado.correo = (String.valueOf(tableEmpleados.getModel().getValueAt(seleccion, 6)));
+        CompartirDatosEmpleado.direccion = (String.valueOf(tableEmpleados.getModel().getValueAt(seleccion, 7)));
+        CompartirDatosEmpleado.puesto = (String.valueOf(tableEmpleados.getModel().getValueAt(seleccion, 8)));
+        CompartirDatosEmpleado.estado = (String.valueOf(tableEmpleados.getModel().getValueAt(seleccion,9)));
+        CompartirDatosEmpleado.salario = (String.valueOf(tableEmpleados.getModel().getValueAt(seleccion, 10)));
+        CompartirDatosEmpleado.datos_llenos = true;
+        this.btnModificar.setEnabled(true);
+    }//GEN-LAST:event_tableEmpleadosMouseClicked
+
+    private void formWindowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosed
+        FrmEmpleados empleados = new FrmEmpleados();
+        empleados.setVisible(true);
+    }//GEN-LAST:event_formWindowClosed
+
+    private void btnRegresarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegresarActionPerformed
+        this.dispose();
+        CompartirDatosEmpleado compartir = new CompartirDatosEmpleado();
+        CompartirDatosEmpleado.id_empleado = null;
+        CompartirDatosEmpleado.identidad = null;
+        CompartirDatosEmpleado.nombre = null;
+        CompartirDatosEmpleado.apellido = null;
+        CompartirDatosEmpleado.fecha_nacimiento = null; 
+        CompartirDatosEmpleado.telefono = null;
+        CompartirDatosEmpleado.correo = null;
+        CompartirDatosEmpleado.direccion = null;
+        CompartirDatosEmpleado.puesto = "Seleccione un puesto";
+        CompartirDatosEmpleado.estado = "Seleccione un estado";
+        CompartirDatosEmpleado.salario = null;
+        CompartirDatosEmpleado.datos_llenos = false;
+        
+    }//GEN-LAST:event_btnRegresarActionPerformed
+
+    private void rdbTodosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rdbTodosActionPerformed
+        if (this.rdbTodos.isSelected())
+        {
+            this.Filtro = "Todos";
+            Conexion con = new Conexion();
+            con.BarraBusqueda("empleados", this.txtBusqueda.getText(), this.tableEmpleados, 13, this.Filtro);
+            this.txtBusqueda.setEnabled(true);
+        }
+    }//GEN-LAST:event_rdbTodosActionPerformed
+
+    private void rdbActivosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rdbActivosActionPerformed
+        if (this.rdbActivos.isSelected())
+        {
+            this.Filtro = "Activos";
+            Conexion con = new Conexion();
+            con.BarraBusqueda("empleados", this.txtBusqueda.getText(), this.tableEmpleados, 13, this.Filtro);
+            this.txtBusqueda.setEnabled(true);
+        }
+    }//GEN-LAST:event_rdbActivosActionPerformed
+
+    private void rdbVacacionesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rdbVacacionesActionPerformed
+        Filtro = "En vacaciones";
+        Conexion con = new Conexion();
+        con.BarraBusqueda("empleados", this.txtBusqueda.getText(), this.tableEmpleados, 13, this.Filtro);
+        this.txtBusqueda.setEnabled(true);
+    }//GEN-LAST:event_rdbVacacionesActionPerformed
+
+    private void rdbDespedidosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rdbDespedidosActionPerformed
+        Filtro = "Despedidos";
+        Conexion con = new Conexion();
+        con.BarraBusqueda("empleados", this.txtBusqueda.getText(), this.tableEmpleados, 13, this.Filtro);
+        this.txtBusqueda.setEnabled(true);
+        
+    }//GEN-LAST:event_rdbDespedidosActionPerformed
 
     /**
      * @param args the command line arguments
@@ -157,10 +332,19 @@ public class FrmBusquedaEmpleados extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnLimpiar;
+    private javax.swing.JButton btnModificar;
+    private javax.swing.JButton btnRegresar;
+    private javax.swing.ButtonGroup btngroupVisualizar;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JRadioButton rdbActivos;
+    private javax.swing.JRadioButton rdbDespedidos;
+    private javax.swing.JRadioButton rdbTodos;
+    private javax.swing.JRadioButton rdbVacaciones;
     private javax.swing.JTable tableEmpleados;
     private javax.swing.JTextField txtBusqueda;
     // End of variables declaration//GEN-END:variables
