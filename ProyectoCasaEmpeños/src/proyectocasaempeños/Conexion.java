@@ -1,4 +1,3 @@
-
 package proyectocasaempeños;
 
 import java.awt.Component;
@@ -17,6 +16,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Arrays;
 import java.util.Base64;
+import java.util.Calendar;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.crypto.BadPaddingException;
@@ -44,8 +44,8 @@ public class Conexion
     
     private static final String driver = "com.mysql.jdbc.Driver";
     private static final String user = "root";
-    private static final String pass = "123456";
-    private static final String url = "jdbc:mysql://localhost:3306/bdd_poo";
+    private static final String pass = "";
+    private static final String url = "jdbc:mysql://localhost:3307/bdd_poo";
     
      public void conector() {
 
@@ -496,5 +496,121 @@ public class Conexion
         }
         
         JOptionPane.showMessageDialog(null, mensaje);
+    }
+    
+    public void ingresarCliente( String identidadCliente, String nombreCliente, String apellidoCliente, String usuarioActual ){
+        
+        // Fecha.
+        Calendar calendario = Calendar.getInstance();
+        java.sql.Date startDate = new java.sql.Date( calendario.getTime().getTime() );
+
+        try{
+            
+            this.con = ( Connection ) DriverManager.getConnection( this.url, this.user, this.pass );
+            
+            String query = "INSERT INTO clientes (identidad, nombre, apellido, id_estado_logico, usuario_ingreso, fecha_ingreso) VALUES (?, ?, ?, '1', ?, ?);";
+            
+            PreparedStatement preparedStmt = con.prepareStatement( query );
+            
+            preparedStmt.setString ( 1, identidadCliente );
+            preparedStmt.setString ( 2, nombreCliente );
+            preparedStmt.setString ( 3, apellidoCliente );
+            preparedStmt.setString ( 4, usuarioActual );
+            preparedStmt.setDate   ( 5, startDate );
+            
+            preparedStmt.execute();
+            
+            con.close();
+          }
+          catch (Exception e){
+              
+              System.err.println("¡Hubo un error!");
+              System.err.println(e.getMessage());
+          }
+    }
+    
+    public void ingresarCompras( JTable tabla ){
+        
+        try{
+            
+            this.con = ( Connection ) DriverManager.getConnection( this.url, this.user, this.pass );
+            
+            int filas = tabla.getRowCount();
+            
+            for( Integer fila=0; fila<filas; fila++ ){
+                
+                String query = "INSERT INTO inventario (descripcion, cantidad_disponible, precio_referencial_venta, id_estado) VALUES (?, ?, ?, '3');";
+
+                PreparedStatement preparedStmt = con.prepareStatement( query );
+                
+                preparedStmt.setString ( 1, ( String ) tabla.getValueAt( fila, 0 ).toString() );
+                preparedStmt.setInt    ( 2, ( Integer ) Integer.parseInt( tabla.getValueAt( fila, 1 ).toString() ) );
+                preparedStmt.setInt    ( 3, ( Integer ) Integer.parseInt( tabla.getValueAt( fila, 2 ).toString() ) );
+
+                preparedStmt.execute();
+            }
+            
+            con.close();
+          }
+          catch (Exception e){
+              
+              System.err.println("¡Hubo un error!");
+              System.err.println(e.getMessage());
+          }
+    }
+    
+    public void ingresarDetallesCompras( String idCliente, String usuarioActual ){
+        
+        // Fecha.
+        Calendar calendario = Calendar.getInstance();
+        java.sql.Date startDate = new java.sql.Date( calendario.getTime().getTime() );
+
+        try{
+            
+            this.con = ( Connection ) DriverManager.getConnection( this.url, this.user, this.pass );
+            
+            String query = "INSERT INTO compras (fecha_compra, id_cliente, id_empleado) VALUES (?, ?, ?);";
+            
+            PreparedStatement preparedStmt = con.prepareStatement( query );
+            
+            preparedStmt.setDate   ( 1, startDate );
+            preparedStmt.setString ( 2, idCliente );
+            preparedStmt.setString ( 3, usuarioActual );
+            
+            preparedStmt.execute();
+            
+            con.close();
+          }
+          catch (Exception e){
+              
+              System.err.println("¡Hubo un error!");
+              System.err.println(e.getMessage());
+          }
+    }
+    
+    public String obtenerCodigoClienteIngresar(String identidad) {
+        
+        String estado="", valor="";
+        
+        try{
+            
+            Conexion.con = ( com.mysql.jdbc.Connection ) DriverManager.getConnection( Conexion.url, Conexion.user, Conexion.pass );
+            Conexion.stm = con.createStatement();
+            Conexion.rss = stm.executeQuery( "select * from clientes where identidad = '" + identidad + "';" );
+            
+            while (rss.next())
+            {
+                valor = rss.getString( "id_cliente" );
+            }
+
+            con.close();
+        }
+        catch( SQLException e ){
+            
+            estado = "Error de conexión: " + e.toString();
+            JOptionPane.showMessageDialog(null, estado);
+        }
+        
+        return valor;
     }
 }
