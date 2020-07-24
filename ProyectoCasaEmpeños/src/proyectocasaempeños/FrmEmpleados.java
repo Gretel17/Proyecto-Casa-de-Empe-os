@@ -593,17 +593,17 @@ public class FrmEmpleados extends javax.swing.JFrame {
 
     private void txtIdentidadKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtIdentidadKeyTyped
         Validaciones val = new Validaciones();
-        val.ValidarNumeros(evt);
+        //val.ValidarNumeros(evt);
     }//GEN-LAST:event_txtIdentidadKeyTyped
 
     private void txtNombreKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtNombreKeyTyped
         Validaciones val = new Validaciones();
-        val.ValidarLetras(evt);
+        //val.ValidarLetras(evt);
     }//GEN-LAST:event_txtNombreKeyTyped
 
     private void txtTelefonoKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtTelefonoKeyTyped
         Validaciones val = new Validaciones();
-        val.ValidarNumeros(evt);
+        //val.ValidarNumeros(evt);
     }//GEN-LAST:event_txtTelefonoKeyTyped
 
     private void fecha_nacimiento_datechooserMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fecha_nacimiento_datechooserMouseClicked
@@ -612,12 +612,12 @@ public class FrmEmpleados extends javax.swing.JFrame {
 
     private void txtSalarioKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtSalarioKeyTyped
         Validaciones val = new Validaciones();
-        val.ValidarNumeros(evt);
+        //val.ValidarNumeros(evt);
     }//GEN-LAST:event_txtSalarioKeyTyped
 
     private void txtApellidoKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtApellidoKeyTyped
         Validaciones val = new Validaciones();
-        val.ValidarLetras(evt);
+        //val.ValidarLetras(evt);
     }//GEN-LAST:event_txtApellidoKeyTyped
 
     private void txtIdentidadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtIdentidadActionPerformed
@@ -634,7 +634,7 @@ public class FrmEmpleados extends javax.swing.JFrame {
 
     private void txtUsuarioKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtUsuarioKeyTyped
         Validaciones val = new Validaciones();
-        val.ValidarLetrasNumeros(evt);
+        //val.ValidarLetrasNumeros(evt);
     }//GEN-LAST:event_txtUsuarioKeyTyped
 
     /**

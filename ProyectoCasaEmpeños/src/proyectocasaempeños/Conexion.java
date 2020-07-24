@@ -11,6 +11,7 @@ import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -24,9 +25,12 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumnModel;
@@ -40,7 +44,7 @@ public class Conexion
     
     private static final String driver = "com.mysql.jdbc.Driver";
     private static final String user = "root";
-    private static final String pass = "Daniel100";
+    private static final String pass = "123456";
     private static final String url = "jdbc:mysql://localhost:3306/bdd_poo";
     
      public void conector() {
@@ -354,5 +358,143 @@ public class Conexion
         }
         
         return verificador;
+    }
+    
+    public void llenarCmbEstadoObjetos(JComboBox estadoObjetos) {
+        
+        String estado = "";
+        
+        try{
+            Conexion.con = (com.mysql.jdbc.Connection) DriverManager.getConnection(Conexion.url, Conexion.user, Conexion.pass);
+            Conexion.stm = con.createStatement();
+            Conexion.rss = stm.executeQuery("select * from estado where id_estado = 2 or id_estado = 3;");
+            DefaultComboBoxModel modelo = (DefaultComboBoxModel) estadoObjetos.getModel();
+            
+            
+            while (rss.next())
+            {
+                modelo.addElement(rss.getString("descripcion"));
+            }
+            
+            estadoObjetos.setModel(modelo);
+
+            con.close();
+        }
+        catch (SQLException e){
+            estado = "Error de Conexion: " + e.toString();
+            JOptionPane.showMessageDialog(null, estado);
+        }
+    }
+     
+    public void llenarTablaInventario (JTable inventario) {
+        String estado = "";
+        
+        try
+        {
+            Conexion.con = (com.mysql.jdbc.Connection) DriverManager.getConnection(Conexion.url, Conexion.user, Conexion.pass);
+            Conexion.stm = con.createStatement();
+            Conexion.rss = stm.executeQuery("select a.id_producto, b.descripcion as estado, a.descripcion, a.cantidad_disponible, a.precio_referencial_venta from inventario a inner join estado b on a.id_estado = b.id_estado where a.id_estado = 2 or a.id_estado = 3;");
+            DefaultTableModel modelo = (DefaultTableModel) inventario.getModel();
+            
+            while (rss.next())
+            {
+                // Se crea un array que será una de las filas de la tabla.
+                Object [] fila = new Object[5]; // Hay dos columnas en la tabla
+                // Se rellena cada posición del array con una de las columnas de la tabla en base de datos.
+
+                fila[0] = rss.getObject(1);
+                fila[1] = rss.getObject(2);
+                fila[2] = rss.getObject(3);
+                fila[3] = rss.getObject(4);
+                fila[4] = rss.getObject(5);
+                
+                // El primer indice en rs es el 1, no el cero, por eso se suma 1.
+
+                // Se añade al modelo la fila completa.
+                modelo.addRow(fila);
+            }
+            
+            inventario.setModel(modelo);
+
+            DefaultTableCellRenderer centrado = new DefaultTableCellRenderer();
+            centrado.setHorizontalAlignment(JLabel.CENTER);
+            
+            for (int i = 0; i<5; i++)
+            {
+                inventario.getColumnModel().getColumn(i).setCellRenderer(centrado);
+            }
+            
+            con.close();
+
+        }
+        catch (SQLException e){
+            estado = "Error de Conexion: " + e.toString();
+            JOptionPane.showMessageDialog(null, estado);
+        }
+    }
+    
+    public int obtenerCodigoCmbEstadoObjetos(String estadoObjeto) {
+        
+        String estado = "";
+        
+        Integer valor=0;
+        
+        try{
+            Conexion.con = (com.mysql.jdbc.Connection) DriverManager.getConnection(Conexion.url, Conexion.user, Conexion.pass);
+            Conexion.stm = con.createStatement();
+            Conexion.rss = stm.executeQuery("select * from estado where descripcion = '"+estadoObjeto+"';");
+                       
+            
+            while (rss.next())
+            {
+                valor=Integer.parseInt(rss.getString("id_estado"));
+            }
+
+            con.close();
+        }
+        catch (SQLException e){
+            estado = "Error de Conexion: " + e.toString();
+            JOptionPane.showMessageDialog(null, estado);
+        }
+        
+        return valor;
+    }
+    
+    public void modificar(String nomProducto, Integer cantidad, Integer precio, Integer estado, String usuario, String fecha, Integer id){
+                
+        String mensaje = "";
+        
+        PreparedStatement pstm = null;
+        
+        try
+        {
+            
+            //JOptionPane.showMessageDialog(null, fecha + " codigo: "+id);
+            this.con = (Connection) DriverManager.getConnection(this.url, this.user, this.pass); //DriverManager.getConnection("jdbc:mysql://localhost:3306/bdalumnos?useServerPrepStmts=true",this.user, this.pass);
+                     //(Connection) DriverManager.getConnection(this.url, this.user, this.pass);
+            pstm = con.prepareStatement("UPDATE inventario SET descripcion = ?, cantidad_disponible = ?, precio_referencial_venta = ?, id_estado = ?, usuario_modifico = ?, fecha_modifico = ? WHERE id_producto = ?");
+            
+            pstm.setString(1, nomProducto);
+            pstm.setInt(2, cantidad);
+            pstm.setInt(3, precio);
+            pstm.setInt(4, estado);
+            pstm.setString(5, usuario);
+            pstm.setString(6, fecha);
+            pstm.setInt(7, id);
+
+            
+            //pstm.executeQuery();
+            Integer retorno = pstm.executeUpdate();
+            //JOptionPane.showMessageDialog(null, retorno);
+            if(retorno>0)
+                mensaje="Datos modificados exitosamente";            
+            
+            con.close();
+        }
+        catch (SQLException e){
+            mensaje="Error de conexion: " + e;
+        }
+        
+        JOptionPane.showMessageDialog(null, mensaje);
     }
 }

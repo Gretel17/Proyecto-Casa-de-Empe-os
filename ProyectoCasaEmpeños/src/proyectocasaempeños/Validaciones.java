@@ -4,9 +4,8 @@ package proyectocasaempeños;
 import java.awt.event.KeyEvent;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import javax.mail.internet.AddressException;
-import javax.mail.internet.InternetAddress;
 import javax.swing.JOptionPane;
+import javax.swing.JTextField;
 //import org.apache.commons.validator.routines.EmailValidator;
 
 
@@ -30,53 +29,73 @@ public class Validaciones
         return resultado;
     }
     
-       
-    public char s;
-    public char space='a';
     
-    public void ValidarLetras(KeyEvent evt){
-        s = evt.getKeyChar();
-        if(Character.isLetter(s));
-        if(Character.isWhitespace(s));
+     public int campoVacio(JTextField campo){
         
-        if(Character.isLetter(s) || Character.isWhitespace(s) && !Character.isWhitespace(space)){
-            if(Character.isWhitespace(s)) space = s; else space = 'a';
+        int mensaje = 0;
+        
+        if (campo.getText().isEmpty()) 
+        {
+            mensaje=1;
         }else{
-            evt.consume();     
+            if(campo.getText().matches("^\\s*$") == true){
+                mensaje=2;
+            }
+            
         }
-       }
-    
-     public void ValidarLetrasNumeros(KeyEvent evt){
-        s = evt.getKeyChar();
-        if(Character.isLetter(s));
-        if(Character.isWhitespace(s));
-        if(Character.isDigit(s));
-         if(Character.isLetter(s) || Character.isWhitespace(s) && !Character.isWhitespace(space) || Character.isDigit(s)){
-            if(Character.isWhitespace(s)) space = s; else space = 'a';
-        }else{
-            evt.consume();     
+        return mensaje; 
+    }
+   
+    public void validarEspacios(KeyEvent evt) {
+        char caracter = evt.getKeyChar();
+        if ((caracter == KeyEvent.VK_SPACE))
+        {
+            JOptionPane.showMessageDialog(null, "No se pueden ingresar espacios.");
+            evt.consume();
         }
-     }
-    
-     public void ValidarNumeros(KeyEvent evt){
-        s = evt.getKeyChar();
-        if(Character.isLetter(s));
-        if(Character.isWhitespace(s));
-        if(Character.isDigit(s));
-         if(Character.isDigit(s) ){
-            if(Character.isWhitespace(s)) space = s; else space = 'a';
-        }else{
-            evt.consume();     
-        }
-     }
-     
-     public void ValidarCamposVacios()
-     {
          
-     }
-     
-     
-     
-    // "^\p{L}+(?: \p{L}+)*$"
+    }
+    
+    public boolean validarLongitud(KeyEvent evt, Integer longitud, Integer longitudMinima, Integer longitudMaxima){
+        
+        boolean mensaje=false;
+        
+        if (longitud > longitudMaxima) 
+        {
+            evt.consume();
+        }
+        
+        if(longitud < longitudMinima){
+            mensaje=true;
+        }
+        return mensaje;
+    }
+    
+    public void validarNumeros(KeyEvent evt){
+        char caracter = evt.getKeyChar();
+        
+        if(!Character.isDigit(caracter)){
+            evt.consume();
+        }
+    }
+    
+    public void validarLetras(KeyEvent evt){
+        char caracter = evt.getKeyChar();
+        if(Character.isLetter(caracter))
+        {
+            JOptionPane.showMessageDialog(null, "No se pueden ingresar letras.");
+            evt.consume();
+        }
+    }
+    
+    public boolean validarCampos(JTextField campo) {
+        boolean validar;
+        if (campo.getText().isEmpty() || campo.getText().matches("^\\s*$") == true) {
+            validar = false;
+        }else{
+            validar = true;
+        }
+        return validar;
+    }
      
 }
