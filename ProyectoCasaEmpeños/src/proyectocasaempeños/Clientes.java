@@ -125,8 +125,29 @@ public class Clientes extends javax.swing.JFrame {
         jLabel3.setFont(new java.awt.Font("Century Gothic", 1, 14)); // NOI18N
         jLabel3.setText("Nombre:");
 
+        txtIdentidad.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtIdentidadKeyReleased(evt);
+            }
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtIdentidadKeyTyped(evt);
+            }
+        });
+
+        txtNombre.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtNombreKeyTyped(evt);
+            }
+        });
+
         jLabel4.setFont(new java.awt.Font("Century Gothic", 1, 14)); // NOI18N
         jLabel4.setText("Apellido:");
+
+        txtTelefono.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtTelefonoKeyTyped(evt);
+            }
+        });
 
         jLabel5.setFont(new java.awt.Font("Century Gothic", 1, 14)); // NOI18N
         jLabel5.setText("Teléfono:");
@@ -136,6 +157,18 @@ public class Clientes extends javax.swing.JFrame {
 
         jLabel7.setFont(new java.awt.Font("Century Gothic", 1, 14)); // NOI18N
         jLabel7.setText("Dirección:");
+
+        txtApellido.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtApellidoKeyTyped(evt);
+            }
+        });
+
+        txtCorreo.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtCorreoKeyTyped(evt);
+            }
+        });
 
         btnIngresar.setFont(new java.awt.Font("Century Gothic", 0, 11)); // NOI18N
         btnIngresar.setText("Ingresar");
@@ -432,6 +465,44 @@ public class Clientes extends javax.swing.JFrame {
         // TODO add your handling code here:
         this.txtBuscar.setText(null);
     }//GEN-LAST:event_btnLimpiarActionPerformed
+
+    private void txtIdentidadKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtIdentidadKeyTyped
+        // TODO add your handling code here:
+        Validaciones val=new Validaciones();
+        val.validarEspacios(evt);
+        val.validarNumeros(evt);
+    }//GEN-LAST:event_txtIdentidadKeyTyped
+
+    private void txtNombreKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtNombreKeyTyped
+        // TODO add your handling code here:
+        Validaciones val=new Validaciones();
+        val.validarLetrasconEspacios(evt);
+    }//GEN-LAST:event_txtNombreKeyTyped
+
+    private void txtApellidoKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtApellidoKeyTyped
+        // TODO add your handling code here:
+        Validaciones val=new Validaciones();
+        val.validarLetrasconEspacios(evt);
+    }//GEN-LAST:event_txtApellidoKeyTyped
+
+    private void txtTelefonoKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtTelefonoKeyTyped
+        // TODO add your handling code here:
+        Validaciones val=new Validaciones();
+        val.validarEspacios(evt);
+        val.validarNumeros(evt);
+    }//GEN-LAST:event_txtTelefonoKeyTyped
+
+    private void txtCorreoKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtCorreoKeyTyped
+        // TODO add your handling code here:
+        Validaciones val=new Validaciones();
+        val.validarEspacios(evt);
+        
+    }//GEN-LAST:event_txtCorreoKeyTyped
+
+    private void txtIdentidadKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtIdentidadKeyReleased
+        // TODO add your handling code here:
+        
+    }//GEN-LAST:event_txtIdentidadKeyReleased
 
     /**
      * @param args the command line arguments
