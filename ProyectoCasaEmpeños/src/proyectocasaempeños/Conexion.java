@@ -14,6 +14,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.Calendar;
@@ -847,5 +848,113 @@ public class Conexion
         
         return verificador;
     }
+    
+    public void ingresarcliente(String Identidad,String Nombre,String Apellido,String Telefono,String Correo,String Direccion)
+     {
+        
+
+        try 
+        {
+            //
+            Conexion.con = (Connection) DriverManager.getConnection(Conexion.url, Conexion.user, Conexion.pass);
+            String SQL = "INSERT INTO `bdd_poo`.`clientes`(`identidad`,`nombre`,`apellido`,`telefono`,`correo_electronico`,`direccion`) values(?,?,?,?,?,?)";
+            JOptionPane.showMessageDialog(null,"Los datos del cliente fueron insertados correctamente");
+            
+            PreparedStatement stm = con.prepareStatement(SQL);
+            
+            stm.setString(1, Identidad);
+            stm.setString(2, Nombre);
+            stm.setString(3, Apellido);
+            stm.setString(4, Telefono);
+            stm.setString(5, Correo);
+            stm.setString(6, Direccion);
+            
+            stm.executeUpdate();
+        }
+        catch (SQLException e) {
+            JOptionPane.showMessageDialog(null,"Ocurrio un problema en la base de datos"+e);
+            e.printStackTrace();
+        }
+    }
+     
+    public void ingresararticulo(String NombreArticulo,int Cantidad,int MontoAcordado , int estado)
+    {
+        try 
+        {
+            Conexion.con = (Connection) DriverManager.getConnection(Conexion.url, Conexion.user, Conexion.pass);
+            String SQL = "INSERT INTO `bdd_poo`.`inventario` (`descripcion`,`cantidad_disponible`,`precio_referencial_venta`,`id_estado`) values(?,?,?,?)";
+           
+            
+            PreparedStatement stm = con.prepareStatement(SQL);
+            
+            stm.setString(1, NombreArticulo);
+            stm.setInt(2, Cantidad);
+            stm.setInt(3, MontoAcordado);
+            stm.setInt(4, estado);
+            stm.executeUpdate();
+             JOptionPane.showMessageDialog(null,"Los datos del articulo fueron insertados correctamente");
+        }
+        catch (SQLException e) {
+            JOptionPane.showMessageDialog(null,"Ocurrio un problema en la base de datos"+e);
+            e.printStackTrace();
+        }
+    }
+    public void ingresarcontrato(int id_cliente,int id_estado,int monto_acordado)
+    {
+        try 
+        {
+            Conexion.con = (Connection) DriverManager.getConnection(Conexion.url, Conexion.user, Conexion.pass);
+            String SQL = "INSERT INTO `bdd_poo`.`contratos` (`id_cliente`,`id_estado`,`monto_acordado`) values(?,?,?)";
+           
+            
+            PreparedStatement stm = con.prepareStatement(SQL);
+            
+            stm.setInt(1, id_cliente);
+            stm.setInt(2, id_estado);
+            stm.setInt(3, monto_acordado);
+            
+            stm.executeUpdate();
+             JOptionPane.showMessageDialog(null,"Los datos fueron insertados correctamente");
+        }
+        catch (SQLException e) {
+            JOptionPane.showMessageDialog(null,"Ocurrio un problema en la base de datos"+e);
+            e.printStackTrace();
+        }
+    }
+    
+     public ArrayList <String> comboestado(JComboBox roles)
+     {
+         
+         ArrayList<String> lista = new ArrayList<>();
+         try
+         {
+             Conexion.con = (Connection) DriverManager.getConnection(Conexion.url, Conexion.user, Conexion.pass);
+             Conexion.stm = con.createStatement();
+             Conexion.rss = stm.executeQuery("Select*from estado");
+             
+             while(rss.next())
+             {
+                 lista.add(rss.getString("descripcion"));
+                 
+                 
+             }    
+             roles.removeAllItems();
+             roles.addItem("Seleccione uno");
+             for (int i = 0; i < lista.size(); i++) {
+               roles.addItem(lista.get(i));    
+             }
+             
+             
+         }
+         catch (Exception ex) {
+             JOptionPane.showMessageDialog(null, ex);
+         }
+        
+         return lista;
+     }
+     
+    
+    
+
 
 }
