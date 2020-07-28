@@ -44,8 +44,8 @@ public class Conexion
     
     private static final String driver = "com.mysql.jdbc.Driver";
     private static final String user = "root";
-    private static final String pass = "";
-    private static final String url = "jdbc:mysql://localhost:3307/bdd_poo";
+    private static final String pass = "monkey98";
+    private static final String url = "jdbc:mysql://localhost:3306/bdd_poo";
     
      public void conector() {
 
@@ -699,4 +699,153 @@ public class Conexion
         
         return verificador;
     }
+    
+    
+    
+    ///////////////////////////////////
+     ///CLIENTES
+     
+     public void Mantenimiento_Clientes(String accion, Integer id_cliente, String identidad, String nombre, String apellido, String telefono, String correo, String direccion)
+     {
+        String estado = "";
+        
+        try
+        {
+            String query;
+            Conexion.con = (Connection) DriverManager.getConnection(Conexion.url, Conexion.user, Conexion.pass);
+            query = "{CALL Mantenimiento_clientes(?, ?, ?, ?, ?, ?, ?, ?)}";
+            CallableStatement cs = con.prepareCall(query);
+            cs.setString(1, accion);
+            cs.setInt   (2, id_cliente);
+            cs.setString(3, identidad);
+            cs.setString(4, nombre);
+            cs.setString(5, apellido);
+            cs.setString(6, telefono);
+            cs.setString(7, correo);
+            cs.setString(8, direccion);
+            cs.executeUpdate();
+        }
+        catch (SQLException e){
+            estado = "Error de Conexion: " + e.toString();
+            JOptionPane.showMessageDialog(null, estado);
+        }
+    }
+     
+     public void ConsultarClientes(JTable tabla_clientes)
+    {
+         String estado = ""; 
+         
+        try 
+        { 
+            Conexion.con = (com.mysql.jdbc.Connection) DriverManager.getConnection(Conexion.url, Conexion.user, Conexion.pass); 
+            Conexion.stm = con.createStatement(); 
+            Conexion.rss = stm.executeQuery("Select id_cliente, identidad, nombre, apellido, telefono, correo_electronico, direccion from clientes where id_estado_logico = 1"); 
+            DefaultTableModel modelo = (DefaultTableModel) tabla_clientes.getModel(); 
+             
+            while (rss.next()) 
+            { 
+                Object [] fila = new Object[7]; 
+                 
+                for (int i = 0; i<7; i++) 
+                { 
+                    fila[i] = rss.getObject(i+1); 
+                } 
+ 
+                modelo.addRow(fila);               
+            } 
+                     
+            tabla_clientes.setModel(modelo); 
+            con.close();
+        } 
+        catch (SQLException e){ 
+            estado = "Error de Conexion: " + e.toString(); 
+            JOptionPane.showMessageDialog(null, estado); 
+        } 
+    }
+     
+     
+     
+      public boolean ValidarIngresarCamposRepetidosClientes(String identidad, String nombre, String apellido, String correo)
+    {
+        String estado = "";
+        boolean verificador = false;
+        
+        try
+        {
+            Conexion.con = (com.mysql.jdbc.Connection) DriverManager.getConnection(Conexion.url, Conexion.user, Conexion.pass);
+            Conexion.stm = con.createStatement();
+            Conexion.rss = stm.executeQuery("select * from clientes");
+            
+            while (rss.next())
+            {
+                if (identidad.equals(rss.getString("identidad")))
+                {
+                    JOptionPane.showMessageDialog(null, "El numero de indentidad ingresado ya se encuentra registrado", "Error", JOptionPane.ERROR_MESSAGE);
+                    verificador = true;
+                }
+                if (nombre.toUpperCase().equals(rss.getString("nombre").toUpperCase()) && apellido.toUpperCase().equals(rss.getString("apellido").toUpperCase()))
+                {
+                    JOptionPane.showMessageDialog(null, "El nombre completo ingresado ya se encuentra registrado", "Error", JOptionPane.ERROR_MESSAGE);
+                    verificador = true;
+                }
+                
+                if (correo.equals(rss.getString("correo_electronico")))
+                {
+                    JOptionPane.showMessageDialog(null, "El correo electrónico ingresado ya se encuentran registrado", "Error", JOptionPane.ERROR_MESSAGE);
+                    verificador = true;
+                }
+            }
+        }
+        catch (SQLException e){
+            estado = "Error de Conexion: " + e.toString();
+            JOptionPane.showMessageDialog(null, estado);
+        } catch (Exception ex) {
+            Logger.getLogger(Conexion.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        return verificador;
+    }
+      
+    public boolean ValidarEditarCamposRepetidosClientes(Integer id, String identidad, String nombre, String apellido, String correo)
+    {
+        String estado = "";
+        boolean verificador = false;
+        
+        try
+        {
+            Conexion.con = (com.mysql.jdbc.Connection) DriverManager.getConnection(Conexion.url, Conexion.user, Conexion.pass);
+            Conexion.stm = con.createStatement();
+            Conexion.rss = stm.executeQuery("select * from clientes where id_cliente != "+id);
+            
+            while (rss.next())
+            {
+                if (identidad.equals(rss.getString("identidad")))
+                {
+                    JOptionPane.showMessageDialog(null, "El numero de indentidad ingresado ya se encuentra registrado", "Error", JOptionPane.ERROR_MESSAGE);
+                    verificador = true;
+                }
+                if (nombre.toUpperCase().equals(rss.getString("nombre").toUpperCase()) && apellido.toUpperCase().equals(rss.getString("apellido").toUpperCase()))
+                {
+                    JOptionPane.showMessageDialog(null, "El nombre completo ingresado ya se encuentra registrado", "Error", JOptionPane.ERROR_MESSAGE);
+                    verificador = true;
+                }
+                
+                
+                if (correo.equals(rss.getString("correo_electronico")))
+                {
+                    JOptionPane.showMessageDialog(null, "El correo electrónico ingresado ya se encuentran registrado", "Error", JOptionPane.ERROR_MESSAGE);
+                    verificador = true;
+                }
+            }
+        }
+        catch (SQLException e){
+            estado = "Error de Conexion: " + e.toString();
+            JOptionPane.showMessageDialog(null, estado);
+        } catch (Exception ex) {
+            Logger.getLogger(Conexion.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        return verificador;
+    }
+
 }

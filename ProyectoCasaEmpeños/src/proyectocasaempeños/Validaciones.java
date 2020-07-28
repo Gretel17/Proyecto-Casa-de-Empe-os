@@ -97,5 +97,13 @@ public class Validaciones
         }
         return validar;
     }
+
+    public void validarLetrasconEspacios(KeyEvent evt){
+        char caracter = evt.getKeyChar();
+        if(!Character.isLetter(caracter) && caracter != KeyEvent.VK_SPACE)
+        {
+            evt.consume();
+        }
+    }
      
 }
