@@ -81,7 +81,7 @@ public class Menu extends javax.swing.JFrame {
         btnGenerarReporte.setText("Generar reporte");
         pnlPrincipal.add(btnGenerarReporte, new org.netbeans.lib.awtextra.AbsoluteConstraints(514, 6, 248, -1));
 
-        btnCerrarSesión.setIcon(new javax.swing.ImageIcon(getClass().getResource("/proyectocasaempeños/salir.png"))); // NOI18N
+        btnCerrarSesión.setIcon(new javax.swing.ImageIcon(getClass().getResource("/proyectocasaempeños/Imágenes/salir.png"))); // NOI18N
         btnCerrarSesión.setText("Cerrar sesión");
         btnCerrarSesión.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
