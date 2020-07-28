@@ -3,22 +3,69 @@ package proyectocasaempeños;
 import javax.swing.table.*;
 import java.time.format.DateTimeFormatter;  
 import java.time.LocalDateTime;
+import javax.swing.JOptionPane;
+import java.text.*;
+import java.awt.print.*;
+import javax.swing.JTable;
+import javax.swing.JTextArea;
 
 public class IngresarCompras extends javax.swing.JFrame {
     
     public IngresarCompras() {
+        
         initComponents();
         
-        DateTimeFormatter fechaHoy = DateTimeFormatter.ofPattern("dd/MM/yyyy"); 
+        DateTimeFormatter fechaHoy = DateTimeFormatter.ofPattern( "dd/MM/yyyy" ); 
         LocalDateTime actual = LocalDateTime.now();
         
-        this.txtFecha.setText(fechaHoy.format(actual));
+        this.txtFecha.setText( fechaHoy.format( actual ) );
+        
+        DeshabilitarCopiarPegar();
+    }
+    
+    private void DeshabilitarCopiarPegar(){
+        
+        this.txtNumeroIdentidadCliente.setTransferHandler(null);
+        this.txtNombreCliente.setTransferHandler(null);
+        this.txtApellidoCliente.setTransferHandler(null);
+        this.txtNombreProducto.setTransferHandler(null);
+        this.txtCantidadProducto.setTransferHandler(null);
+        this.txtPrecioProducto.setTransferHandler(null);
+    }
+    
+    private void ImprimirFactura(){
+        
+        JTextArea paginaImprimir = new JTextArea();
+        
+        paginaImprimir.setText( "\n\t\tCASA DE EMPEÑOS GÓMEZ \n" );
+        paginaImprimir.setText( paginaImprimir.getText() + "\nNúmero de identidad: " + this.txtNumeroIdentidadCliente.getText() );
+        paginaImprimir.setText( paginaImprimir.getText() + "\nNombre completo: " + this.txtNombreCliente.getText() + " " + this.txtApellidoCliente.getText() );
+        paginaImprimir.setText( paginaImprimir.getText() + "\nFecha de la compra: " + this.txtFecha.getText() );
+        paginaImprimir.setText( paginaImprimir.getText() + "\n\nArtículos comprados:" );
+        paginaImprimir.setText( paginaImprimir.getText() + "\nNombre \tCantidad \t Precio" );
+        
+        for( int indiceTablaCompras=0; indiceTablaCompras<this.tblComprasIngresar.getRowCount(); indiceTablaCompras++ ){
+            
+            paginaImprimir.setText( paginaImprimir.getText() + "\n" + this.tblComprasIngresar.getValueAt(indiceTablaCompras, 0) + "\t" + this.tblComprasIngresar.getValueAt(indiceTablaCompras, 1) + "\t" + this.tblComprasIngresar.getValueAt(indiceTablaCompras, 2) );
+        }
+        
+        paginaImprimir.setText( paginaImprimir.getText() + "\n\t\t-------------------- \n\t\tTotal: " + this.txtTotal.getText() );
+        paginaImprimir.setText( paginaImprimir.getText() + "\n\nFecha: " + this.txtFecha.getText() );
+        
+        try{
+            
+            paginaImprimir.print();
+        }
+        catch( Exception e ){}
     }
     
     Conexion conexion = new Conexion();
     
-    int totalCompra = 0;
-    boolean indicadorIngresarNuevoCliente = true;
+    String codigoUsuarioActual="2";
+    int totalCompra=0;
+    boolean indicadorIngresarNuevoCliente = false,
+            validarAgregarCliente         = true,
+            validarAgregarProducto        = false;
     
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -34,6 +81,7 @@ public class IngresarCompras extends javax.swing.JFrame {
         txtApellidoCliente = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
         btnSeleccionarCliente = new javax.swing.JButton();
+        btnIngresarNuevoCliente = new javax.swing.JButton();
         grpDetallesCompra = new javax.swing.JPanel();
         jLabel5 = new javax.swing.JLabel();
         txtNombreProducto = new javax.swing.JTextField();
@@ -47,12 +95,15 @@ public class IngresarCompras extends javax.swing.JFrame {
         jLabel8 = new javax.swing.JLabel();
         txtCantidadProducto = new javax.swing.JTextField();
         jLabel7 = new javax.swing.JLabel();
-        btnIngresarCompra = new javax.swing.JButton();
         jLabel9 = new javax.swing.JLabel();
         txtFecha = new javax.swing.JTextField();
         btnRegresar = new javax.swing.JButton();
+        btnIngresarCompra = new javax.swing.JButton();
+        chkGerarFactura = new javax.swing.JCheckBox();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Ingresar Compra");
+        setResizable(false);
 
         jLabel1.setFont(new java.awt.Font("Dialog", 1, 24)); // NOI18N
         jLabel1.setText("Ingresar Compra");
@@ -61,6 +112,8 @@ public class IngresarCompras extends javax.swing.JFrame {
 
         jLabel2.setText("Número de identidad:");
 
+        txtNumeroIdentidadCliente.setEditable(false);
+        txtNumeroIdentidadCliente.setEnabled(false);
         txtNumeroIdentidadCliente.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtNumeroIdentidadClienteActionPerformed(evt);
@@ -72,6 +125,8 @@ public class IngresarCompras extends javax.swing.JFrame {
             }
         });
 
+        txtNombreCliente.setEditable(false);
+        txtNombreCliente.setEnabled(false);
         txtNombreCliente.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtNombreClienteActionPerformed(evt);
@@ -85,6 +140,8 @@ public class IngresarCompras extends javax.swing.JFrame {
 
         jLabel3.setText("Nombre:");
 
+        txtApellidoCliente.setEditable(false);
+        txtApellidoCliente.setEnabled(false);
         txtApellidoCliente.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 txtApellidoClienteKeyTyped(evt);
@@ -100,29 +157,37 @@ public class IngresarCompras extends javax.swing.JFrame {
             }
         });
 
+        btnIngresarNuevoCliente.setText("Ingresar nuevo cliente");
+        btnIngresarNuevoCliente.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnIngresarNuevoClienteActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout grpDatosClienteLayout = new javax.swing.GroupLayout(grpDatosCliente);
         grpDatosCliente.setLayout(grpDatosClienteLayout);
         grpDatosClienteLayout.setHorizontalGroup(
             grpDatosClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(grpDatosClienteLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(grpDatosClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                .addGroup(grpDatosClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(grpDatosClienteLayout.createSequentialGroup()
                         .addComponent(jLabel2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtNumeroIdentidadCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(txtNumeroIdentidadCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 132, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLabel3)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtNombreCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(txtNombreCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel4)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtApellidoCliente))
                     .addGroup(grpDatosClienteLayout.createSequentialGroup()
                         .addComponent(btnSeleccionarCliente)
-                        .addGap(247, 247, 247)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel4)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txtApellidoCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btnIngresarNuevoCliente)))
+                .addContainerGap())
         );
         grpDatosClienteLayout.setVerticalGroup(
             grpDatosClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -136,7 +201,9 @@ public class IngresarCompras extends javax.swing.JFrame {
                     .addComponent(jLabel4)
                     .addComponent(txtApellidoCliente, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnSeleccionarCliente)
+                .addGroup(grpDatosClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnSeleccionarCliente)
+                    .addComponent(btnIngresarNuevoCliente))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -212,7 +279,7 @@ public class IngresarCompras extends javax.swing.JFrame {
             tblComprasIngresar.getColumnModel().getColumn(2).setResizable(false);
         }
 
-        txtTotal.setEnabled(false);
+        txtTotal.setEditable(false);
         txtTotal.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtTotalActionPerformed(evt);
@@ -238,28 +305,28 @@ public class IngresarCompras extends javax.swing.JFrame {
                 .addGroup(grpDetallesCompraLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane1)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, grpDetallesCompraLayout.createSequentialGroup()
-                        .addComponent(jLabel7)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtCantidadProducto, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel6)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtPrecioProducto)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnEliminarProducto))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, grpDetallesCompraLayout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(jLabel8)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, grpDetallesCompraLayout.createSequentialGroup()
                         .addGroup(grpDetallesCompraLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, grpDetallesCompraLayout.createSequentialGroup()
+                            .addGroup(grpDetallesCompraLayout.createSequentialGroup()
                                 .addComponent(jLabel5)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txtNombreProducto, javax.swing.GroupLayout.PREFERRED_SIZE, 294, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(txtNombreProducto))
+                            .addGroup(grpDetallesCompraLayout.createSequentialGroup()
+                                .addComponent(jLabel7)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btnAgregarProducto1))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, grpDetallesCompraLayout.createSequentialGroup()
-                                .addComponent(jLabel8)
+                                .addComponent(txtCantidadProducto, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txtTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                                .addComponent(jLabel6)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(txtPrecioProducto, javax.swing.GroupLayout.PREFERRED_SIZE, 231, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(grpDetallesCompraLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(btnEliminarProducto, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(btnAgregarProducto1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addContainerGap())
         );
         grpDetallesCompraLayout.setVerticalGroup(
@@ -270,23 +337,27 @@ public class IngresarCompras extends javax.swing.JFrame {
                     .addComponent(jLabel5)
                     .addComponent(txtNombreProducto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnAgregarProducto1))
-                .addGap(6, 6, 6)
-                .addGroup(grpDetallesCompraLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(grpDetallesCompraLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jLabel7)
-                        .addComponent(txtCantidadProducto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel6))
-                    .addGroup(grpDetallesCompraLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(txtPrecioProducto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(btnEliminarProducto)))
+                .addGap(2, 2, 2)
+                .addGroup(grpDetallesCompraLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel7)
+                    .addComponent(txtCantidadProducto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel6)
+                    .addComponent(btnEliminarProducto)
+                    .addComponent(txtPrecioProducto, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(grpDetallesCompraLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel8)
                     .addComponent(txtTotal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(26, 26, 26))
         );
+
+        jLabel9.setText("Fecha:");
+
+        txtFecha.setEditable(false);
+
+        btnRegresar.setText("Regresar");
 
         btnIngresarCompra.setText("Ingresar compra");
         btnIngresarCompra.addActionListener(new java.awt.event.ActionListener() {
@@ -295,12 +366,7 @@ public class IngresarCompras extends javax.swing.JFrame {
             }
         });
 
-        jLabel9.setText("Fecha:");
-
-        txtFecha.setEditable(false);
-        txtFecha.setEnabled(false);
-
-        btnRegresar.setText("Regresar");
+        chkGerarFactura.setText("Generar factura");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -308,44 +374,40 @@ public class IngresarCompras extends javax.swing.JFrame {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
-                            .addContainerGap()
-                            .addComponent(grpDetallesCompra, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
-                            .addGap(196, 196, 196)
-                            .addComponent(jLabel1)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabel9)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(txtFecha, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
-                            .addContainerGap()
-                            .addComponent(grpDatosCliente, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addContainerGap()
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jLabel1)
+                        .addGap(105, 105, 105)
+                        .addComponent(jLabel9)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtFecha, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(btnRegresar)
-                        .addGap(147, 147, 147)
-                        .addComponent(btnIngresarCompra)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btnIngresarCompra)
+                        .addGap(139, 139, 139)
+                        .addComponent(chkGerarFactura))
+                    .addComponent(grpDatosCliente, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(grpDetallesCompra, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(txtFecha, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel9))
+                .addGap(6, 6, 6)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtFecha, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel9)
                     .addComponent(jLabel1))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(grpDatosCliente, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(grpDetallesCompra, javax.swing.GroupLayout.PREFERRED_SIZE, 240, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(grpDetallesCompra, javax.swing.GroupLayout.PREFERRED_SIZE, 237, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnRegresar)
                     .addComponent(btnIngresarCompra)
-                    .addComponent(btnRegresar))
+                    .addComponent(chkGerarFactura))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -355,20 +417,21 @@ public class IngresarCompras extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         pack();
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
-
+    
     private void txtNombreClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtNombreClienteActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtNombreClienteActionPerformed
@@ -388,43 +451,116 @@ public class IngresarCompras extends javax.swing.JFrame {
     private void btnIngresarCompraActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnIngresarCompraActionPerformed
         // TODO add your handling code here:
         
-        if( indicadorIngresarNuevoCliente = true ){
+        if( indicadorIngresarNuevoCliente == true ){
             
-            conexion.ingresarCliente( this.txtNumeroIdentidadCliente.getText(), this.txtNombreCliente.getText(), this.txtApellidoCliente.getText(), "2" );
+            if( conexion.validarIdentidadRepetidaCliente( this.txtNumeroIdentidadCliente.getText() ) == false ){
+                
+                if( this.txtNumeroIdentidadCliente.getText().trim().isEmpty() || this.txtNombreCliente.getText().trim().isEmpty() || this.txtApellidoCliente.getText().trim().isEmpty() ){
+                    
+                    validarAgregarCliente = false;
+                }
+                else{
+                    
+                    if( validarAgregarProducto ){
+                        
+                        conexion.ingresarCliente( this.txtNumeroIdentidadCliente.getText(), this.txtNombreCliente.getText(), this.txtApellidoCliente.getText(), "2" );
+                        conexion.ingresarCompraInventario(this.tblComprasIngresar);
+                        conexion.ingresarCompra( conexion.obtenerCodigoClienteIngresar( this.txtNumeroIdentidadCliente.getText() ), codigoUsuarioActual );
+                        conexion.ingresarDetallesCompra( this.tblComprasIngresar );
+                        
+                        if( this.chkGerarFactura.isSelected() ){
+
+                            ImprimirFactura();
+                        }
+                        
+                        DefaultTableModel modeloTabla = ( DefaultTableModel ) this.tblComprasIngresar.getModel(); // Crea un modelo para poder eliminar todos los elementos.
+                        modeloTabla.getDataVector().removeAllElements(); // Borra todos los elementos del modelo.
+                        modeloTabla.fireTableDataChanged(); // Actualiza la tabla del modelo a mostrar.
+
+                        totalCompra = 0; // Reinicia el acumulador de comras.
+
+                        this.txtNumeroIdentidadCliente.setText("");
+                        this.txtNombreCliente.setText("");
+                        this.txtApellidoCliente.setText("");
+                        this.txtNumeroIdentidadCliente.setEnabled(false);
+                        this.txtNombreCliente.setEnabled(false);
+                        this.txtApellidoCliente.setEnabled(false);
+                        this.txtTotal.setText(null);
+                        
+                        validarAgregarCliente = true;
+                    }
+                }
+            }
+        }
+        else if( this.txtNumeroIdentidadCliente.getText().trim().isEmpty() || this.txtNombreCliente.getText().trim().isEmpty() || this.txtApellidoCliente.getText().trim().isEmpty() ){
             
-            //this.txtNumeroIdentidadCliente.setText("");
-            this.txtNombreCliente.setText("");
-            this.txtApellidoCliente.setText("");
+            validarAgregarCliente = false;
+        }
+        else{
+            
+            if( validarAgregarProducto ){
+                
+                conexion.ingresarCompraInventario(this.tblComprasIngresar);
+                conexion.ingresarCompra( conexion.obtenerCodigoClienteIngresar( this.txtNumeroIdentidadCliente.getText() ), codigoUsuarioActual );
+                conexion.ingresarDetallesCompra( this.tblComprasIngresar );
+                
+                if( this.chkGerarFactura.isSelected() ){
+                    
+                    ImprimirFactura();
+                }
+                
+                DefaultTableModel modeloTabla = ( DefaultTableModel ) this.tblComprasIngresar.getModel(); // Crea un modelo para poder eliminar todos los elementos.
+                modeloTabla.getDataVector().removeAllElements(); // Borra todos los elementos del modelo.
+                modeloTabla.fireTableDataChanged(); // Actualiza la tabla del modelo a mostrar.
+
+                totalCompra = 0; // Reinicia el acumulador de comras.
+
+                this.txtNumeroIdentidadCliente.setText("");
+                this.txtNombreCliente.setText("");
+                this.txtApellidoCliente.setText("");
+                this.txtNumeroIdentidadCliente.setEnabled(false);
+                this.txtNombreCliente.setEnabled(false);
+                this.txtApellidoCliente.setEnabled(false);
+                this.txtTotal.setText(null);
+                
+                validarAgregarCliente = true;
+            }
         }
         
-        conexion.ingresarCompras(this.tblComprasIngresar);
-        conexion.ingresarDetallesCompras( conexion.obtenerCodigoClienteIngresar( this.txtNumeroIdentidadCliente.getText() ), "2" );
-        DefaultTableModel modeloTabla = ( DefaultTableModel ) this.tblComprasIngresar.getModel(); // Crea un modelo para poder eliminar todos los elementos.
-        modeloTabla.getDataVector().removeAllElements(); // Borra todos los elementos del modelo.
-        modeloTabla.fireTableDataChanged(); // Actualiza la tabla del modelo a mostrar.
-        totalCompra = 0; // Reinicia el acumulador de comras.
-        this.txtNumeroIdentidadCliente.setText("");
+        if( !validarAgregarCliente ){
+            
+            JOptionPane.showMessageDialog( null, "Ingrese todos los datos solicitados del cliente.", "¡Error!", JOptionPane.ERROR_MESSAGE );
+        }
+        else if( !validarAgregarProducto ){
+            
+            JOptionPane.showMessageDialog( null, "Tiene que ingresar por lo menos un producto para hacer la compra.", "¡Error!", JOptionPane.ERROR_MESSAGE );
+        }
     }//GEN-LAST:event_btnIngresarCompraActionPerformed
 
     private void btnAgregarProducto1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAgregarProducto1ActionPerformed
-        // TODO add your handling code here:
         
-        DefaultTableModel modeloTabla = ( DefaultTableModel ) this.tblComprasIngresar.getModel();
-        modeloTabla.addRow( new Object[]{ this.txtNombreProducto.getText(), this.txtCantidadProducto.getText(), this.txtPrecioProducto.getText() } );
-        
-        totalCompra += Integer.parseInt( this.txtCantidadProducto.getText() ) * Integer.parseInt( this.txtPrecioProducto.getText() );
-        
-        this.txtNombreProducto.setText("");
-        this.txtCantidadProducto.setText("");
-        this.txtPrecioProducto.setText("");
-        this.txtTotal.setText( "L." + Integer.toString( totalCompra ) );
+        if( this.txtNombreProducto.getText().trim().isEmpty() || this.txtCantidadProducto.getText().trim().isEmpty() || this.txtPrecioProducto.getText().trim().isEmpty() ){
+            
+            JOptionPane.showMessageDialog( null, "Datos para ingresar compra incompletos.", "¡Error!", JOptionPane.ERROR_MESSAGE );
+        }
+        else{
+            
+            DefaultTableModel modeloTabla = ( DefaultTableModel ) this.tblComprasIngresar.getModel();
+            modeloTabla.addRow( new Object[]{ this.txtNombreProducto.getText(), this.txtCantidadProducto.getText(), this.txtPrecioProducto.getText() } );
+
+            totalCompra += Integer.parseInt( this.txtCantidadProducto.getText() ) * Integer.parseInt( this.txtPrecioProducto.getText() );
+            validarAgregarProducto = true;
+
+            this.txtNombreProducto.setText("");
+            this.txtCantidadProducto.setText("");
+            this.txtPrecioProducto.setText("");
+            this.txtTotal.setText( "L." + Integer.toString( totalCompra ) );
+        }
     }//GEN-LAST:event_btnAgregarProducto1ActionPerformed
 
     private void btnEliminarProductoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarProductoActionPerformed
-        // TODO add your handling code here:
         
-        int columna = this.tblComprasIngresar.getSelectedColumn();
-        int fila    = this.tblComprasIngresar.getSelectedRow();
+        int fila = this.tblComprasIngresar.getSelectedRow();
         
         DefaultTableModel modeloTabla = ( DefaultTableModel ) this.tblComprasIngresar.getModel();
         
@@ -436,10 +572,13 @@ public class IngresarCompras extends javax.swing.JFrame {
             
             modeloTabla.removeRow(this.tblComprasIngresar.getSelectedRow());
         }
+        if( this.tblComprasIngresar.getRowCount() == 0 ){
+            
+            validarAgregarProducto = false;
+        }
     }//GEN-LAST:event_btnEliminarProductoActionPerformed
 
     private void txtNumeroIdentidadClienteKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtNumeroIdentidadClienteKeyTyped
-        // TODO add your handling code here:
         
         if( this.txtNumeroIdentidadCliente.getText().length() >= 13 ){
             
@@ -453,9 +592,8 @@ public class IngresarCompras extends javax.swing.JFrame {
     }//GEN-LAST:event_txtNumeroIdentidadClienteKeyTyped
 
     private void txtNombreClienteKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtNombreClienteKeyTyped
-        // TODO add your handling code here:
         
-        if( this.txtNumeroIdentidadCliente.getText().length() >= 50 ){
+        if( this.txtNombreCliente.getText().length() >= 50 ){
             
             evt.consume();
         }
@@ -467,9 +605,8 @@ public class IngresarCompras extends javax.swing.JFrame {
     }//GEN-LAST:event_txtNombreClienteKeyTyped
 
     private void txtApellidoClienteKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtApellidoClienteKeyTyped
-        // TODO add your handling code here:
         
-        if( this.txtNumeroIdentidadCliente.getText().length() >= 50 ){
+        if( this.txtApellidoCliente.getText().length() >= 50 ){
             
             evt.consume();
         }
@@ -481,43 +618,72 @@ public class IngresarCompras extends javax.swing.JFrame {
     }//GEN-LAST:event_txtApellidoClienteKeyTyped
 
     private void txtNombreProductoKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtNombreProductoKeyTyped
-        // TODO add your handling code here:
         
-        if( this.txtNumeroIdentidadCliente.getText().length() >= 100 ){
+        if( this.txtNombreProducto.getText().length() >= 100 ){
+            
+            evt.consume();
+        }
+        
+        if( this.txtNombreProducto.getText().length() >= 100 ){
             
             evt.consume();
         }
     }//GEN-LAST:event_txtNombreProductoKeyTyped
 
     private void txtCantidadProductoKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtCantidadProductoKeyTyped
-        // TODO add your handling code here:
         
         if( !Character.isDigit( evt.getKeyChar() ) ){
+            
+            evt.consume();
+        }
+        
+        if( this.txtCantidadProducto.getText().length() >= 11 ){
             
             evt.consume();
         }
     }//GEN-LAST:event_txtCantidadProductoKeyTyped
 
     private void txtPrecioProductoKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtPrecioProductoKeyTyped
-        // TODO add your handling code here:
         
         if( !Character.isDigit( evt.getKeyChar() ) ){
+            
+            evt.consume();
+        }
+        
+        if( this.txtPrecioProducto.getText().length() >= 11 ){
             
             evt.consume();
         }
     }//GEN-LAST:event_txtPrecioProductoKeyTyped
 
     private void btnSeleccionarClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSeleccionarClienteActionPerformed
-        // TODO add your handling code here:
         
         BuscarCliente buscarCliente = new BuscarCliente();
         
         buscarCliente.setVisible(true);
+        indicadorIngresarNuevoCliente = false;
+        
+        this.dispose();
     }//GEN-LAST:event_btnSeleccionarClienteActionPerformed
 
     private void txtNumeroIdentidadClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtNumeroIdentidadClienteActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtNumeroIdentidadClienteActionPerformed
+
+    private void btnIngresarNuevoClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnIngresarNuevoClienteActionPerformed
+        
+        indicadorIngresarNuevoCliente = true;
+        
+        this.txtNumeroIdentidadCliente.setText(null);
+        this.txtNumeroIdentidadCliente.setEditable(true);
+        this.txtNumeroIdentidadCliente.setEnabled(true);
+        this.txtNombreCliente.setText(null);
+        this.txtNombreCliente.setEditable(true);
+        this.txtNombreCliente.setEnabled(true);
+        this.txtApellidoCliente.setText(null);
+        this.txtApellidoCliente.setEditable(true);
+        this.txtApellidoCliente.setEnabled(true);
+    }//GEN-LAST:event_btnIngresarNuevoClienteActionPerformed
     
     /**
      * @param args the command line arguments
@@ -558,8 +724,10 @@ public class IngresarCompras extends javax.swing.JFrame {
     private javax.swing.JButton btnAgregarProducto1;
     private javax.swing.JButton btnEliminarProducto;
     private javax.swing.JButton btnIngresarCompra;
+    public static javax.swing.JButton btnIngresarNuevoCliente;
     private javax.swing.JButton btnRegresar;
     private javax.swing.JButton btnSeleccionarCliente;
+    private javax.swing.JCheckBox chkGerarFactura;
     private javax.swing.JPanel grpDatosCliente;
     private javax.swing.JPanel grpDetallesCompra;
     private javax.swing.JLabel jLabel1;
@@ -574,12 +742,12 @@ public class IngresarCompras extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable tblComprasIngresar;
-    private javax.swing.JTextField txtApellidoCliente;
+    public static javax.swing.JTextField txtApellidoCliente;
     private javax.swing.JTextField txtCantidadProducto;
     private javax.swing.JTextField txtFecha;
-    private javax.swing.JTextField txtNombreCliente;
+    public static javax.swing.JTextField txtNombreCliente;
     private javax.swing.JTextField txtNombreProducto;
-    private javax.swing.JTextField txtNumeroIdentidadCliente;
+    public static javax.swing.JTextField txtNumeroIdentidadCliente;
     private javax.swing.JTextField txtPrecioProducto;
     private javax.swing.JTextField txtTotal;
     // End of variables declaration//GEN-END:variables

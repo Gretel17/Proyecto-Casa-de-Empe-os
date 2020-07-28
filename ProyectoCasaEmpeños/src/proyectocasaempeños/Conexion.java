@@ -44,8 +44,8 @@ public class Conexion
     
     private static final String driver = "com.mysql.jdbc.Driver";
     private static final String user = "root";
-    private static final String pass = "monkey98";
-    private static final String url = "jdbc:mysql://localhost:3306/bdd_poo";
+    private static final String pass = "";
+    private static final String url = "jdbc:mysql://localhost:3307/bdd_poo";
     
      public void conector() {
 
@@ -62,8 +62,6 @@ public class Conexion
             if (con!=null){
                 estado = "Conexion establecida";
             }
-            con.close();
-            
         }
         catch (ClassNotFoundException | SQLException e){
             estado = "Error de conexion: " + e;
@@ -304,6 +302,8 @@ public class Conexion
                     verificador = true;
                 }
             }
+            
+            con.close();
         }
         catch (SQLException e){
             estado = "Error de Conexion: " + e.toString();
@@ -351,6 +351,8 @@ public class Conexion
                     verificador = true;
                 }
             }
+            
+            con.close();
         }
         catch (SQLException e){
             estado = "Error de Conexion: " + e.toString();
@@ -434,153 +436,6 @@ public class Conexion
             JOptionPane.showMessageDialog(null, estado);
         }
     }
-     
-     ///////////////////////////////////
-     ///CLIENTES
-     
-     public void Mantenimiento_Clientes(String accion, Integer id_cliente, String identidad, String nombre, String apellido, String telefono, String correo, String direccion)
-     {
-        String estado = "";
-        
-        try
-        {
-            String query;
-            Conexion.con = (Connection) DriverManager.getConnection(Conexion.url, Conexion.user, Conexion.pass);
-            query = "{CALL Mantenimiento_clientes(?, ?, ?, ?, ?, ?, ?, ?)}";
-            CallableStatement cs = con.prepareCall(query);
-            cs.setString(1, accion);
-            cs.setInt   (2, id_cliente);
-            cs.setString(3, identidad);
-            cs.setString(4, nombre);
-            cs.setString(5, apellido);
-            cs.setString(6, telefono);
-            cs.setString(7, correo);
-            cs.setString(8, direccion);
-            cs.executeUpdate();
-        }
-        catch (SQLException e){
-            estado = "Error de Conexion: " + e.toString();
-            JOptionPane.showMessageDialog(null, estado);
-        }
-    }
-     
-     public void ConsultarClientes(JTable tabla_clientes)
-    {
-         String estado = ""; 
-         
-        try 
-        { 
-            Conexion.con = (com.mysql.jdbc.Connection) DriverManager.getConnection(Conexion.url, Conexion.user, Conexion.pass); 
-            Conexion.stm = con.createStatement(); 
-            Conexion.rss = stm.executeQuery("Select id_cliente, identidad, nombre, apellido, telefono, correo_electronico, direccion from clientes where id_estado_logico = 1"); 
-            DefaultTableModel modelo = (DefaultTableModel) tabla_clientes.getModel(); 
-             
-            while (rss.next()) 
-            { 
-                Object [] fila = new Object[7]; 
-                 
-                for (int i = 0; i<7; i++) 
-                { 
-                    fila[i] = rss.getObject(i+1); 
-                } 
- 
-                modelo.addRow(fila);               
-            } 
-                     
-            tabla_clientes.setModel(modelo); 
-            con.close();
-        } 
-        catch (SQLException e){ 
-            estado = "Error de Conexion: " + e.toString(); 
-            JOptionPane.showMessageDialog(null, estado); 
-        } 
-    }
-     
-     
-     
-      public boolean ValidarIngresarCamposRepetidosClientes(String identidad, String nombre, String apellido, String correo)
-    {
-        String estado = "";
-        boolean verificador = false;
-        
-        try
-        {
-            Conexion.con = (com.mysql.jdbc.Connection) DriverManager.getConnection(Conexion.url, Conexion.user, Conexion.pass);
-            Conexion.stm = con.createStatement();
-            Conexion.rss = stm.executeQuery("select * from clientes");
-            
-            while (rss.next())
-            {
-                if (identidad.equals(rss.getString("identidad")))
-                {
-                    JOptionPane.showMessageDialog(null, "El numero de indentidad ingresado ya se encuentra registrado", "Error", JOptionPane.ERROR_MESSAGE);
-                    verificador = true;
-                }
-                if (nombre.toUpperCase().equals(rss.getString("nombre").toUpperCase()) && apellido.toUpperCase().equals(rss.getString("apellido").toUpperCase()))
-                {
-                    JOptionPane.showMessageDialog(null, "El nombre completo ingresado ya se encuentra registrado", "Error", JOptionPane.ERROR_MESSAGE);
-                    verificador = true;
-                }
-                
-                if (correo.equals(rss.getString("correo_electronico")))
-                {
-                    JOptionPane.showMessageDialog(null, "El correo electrónico ingresado ya se encuentran registrado", "Error", JOptionPane.ERROR_MESSAGE);
-                    verificador = true;
-                }
-            }
-        }
-        catch (SQLException e){
-            estado = "Error de Conexion: " + e.toString();
-            JOptionPane.showMessageDialog(null, estado);
-        } catch (Exception ex) {
-            Logger.getLogger(Conexion.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
-        return verificador;
-    }
-      
-    public boolean ValidarEditarCamposRepetidosClientes(Integer id, String identidad, String nombre, String apellido, String correo)
-    {
-        String estado = "";
-        boolean verificador = false;
-        
-        try
-        {
-            Conexion.con = (com.mysql.jdbc.Connection) DriverManager.getConnection(Conexion.url, Conexion.user, Conexion.pass);
-            Conexion.stm = con.createStatement();
-            Conexion.rss = stm.executeQuery("select * from clientes where id_cliente != "+id);
-            
-            while (rss.next())
-            {
-                if (identidad.equals(rss.getString("identidad")))
-                {
-                    JOptionPane.showMessageDialog(null, "El numero de indentidad ingresado ya se encuentra registrado", "Error", JOptionPane.ERROR_MESSAGE);
-                    verificador = true;
-                }
-                if (nombre.toUpperCase().equals(rss.getString("nombre").toUpperCase()) && apellido.toUpperCase().equals(rss.getString("apellido").toUpperCase()))
-                {
-                    JOptionPane.showMessageDialog(null, "El nombre completo ingresado ya se encuentra registrado", "Error", JOptionPane.ERROR_MESSAGE);
-                    verificador = true;
-                }
-                
-                
-                if (correo.equals(rss.getString("correo_electronico")))
-                {
-                    JOptionPane.showMessageDialog(null, "El correo electrónico ingresado ya se encuentran registrado", "Error", JOptionPane.ERROR_MESSAGE);
-                    verificador = true;
-                }
-            }
-        }
-        catch (SQLException e){
-            estado = "Error de Conexion: " + e.toString();
-            JOptionPane.showMessageDialog(null, estado);
-        } catch (Exception ex) {
-            Logger.getLogger(Conexion.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
-        return verificador;
-    }
-
     
     public int obtenerCodigoCmbEstadoObjetos(String estadoObjeto) {
         
@@ -678,7 +533,7 @@ public class Conexion
           }
     }
     
-    public void ingresarCompras( JTable tabla ){
+    public void ingresarCompraInventario( JTable tabla ){
         
         try{
             
@@ -688,13 +543,12 @@ public class Conexion
             
             for( Integer fila=0; fila<filas; fila++ ){
                 
-                String query = "INSERT INTO inventario (descripcion, cantidad_disponible, precio_referencial_venta, id_estado) VALUES (?, ?, ?, '3');";
+                String query = "INSERT INTO inventario (descripcion, cantidad_disponible, id_estado) VALUES (?, ?, '3');";
 
                 PreparedStatement preparedStmt = con.prepareStatement( query );
                 
                 preparedStmt.setString ( 1, ( String ) tabla.getValueAt( fila, 0 ).toString() );
-                preparedStmt.setInt    ( 2, ( Integer ) Integer.parseInt( tabla.getValueAt( fila, 1 ).toString() ) );
-                preparedStmt.setInt    ( 3, ( Integer ) Integer.parseInt( tabla.getValueAt( fila, 2 ).toString() ) );
+                preparedStmt.setInt    ( 2, ( Integer ) Integer.parseInt( tabla.getValueAt( fila, 2 ).toString() ) );
 
                 preparedStmt.execute();
             }
@@ -708,7 +562,7 @@ public class Conexion
           }
     }
     
-    public void ingresarDetallesCompras( String idCliente, String usuarioActual ){
+    public void ingresarCompra( String idCliente, String usuarioActual ){
         
         // Fecha.
         Calendar calendario = Calendar.getInstance();
@@ -737,7 +591,7 @@ public class Conexion
           }
     }
     
-    public String obtenerCodigoClienteIngresar(String identidad) {
+    public String obtenerCodigoClienteIngresar( String identidad ) {
         
         String estado="", valor="";
         
@@ -745,7 +599,7 @@ public class Conexion
             
             Conexion.con = ( com.mysql.jdbc.Connection ) DriverManager.getConnection( Conexion.url, Conexion.user, Conexion.pass );
             Conexion.stm = con.createStatement();
-            Conexion.rss = stm.executeQuery( "select * from clientes where identidad = '" + identidad + "';" );
+            Conexion.rss = stm.executeQuery( "SELECT * FROM clientes WHERE identidad = '" + identidad + "';" );
             
             while (rss.next())
             {
@@ -761,5 +615,88 @@ public class Conexion
         }
         
         return valor;
+    }
+    
+    public void ingresarDetallesCompra( JTable tabla ){
+        
+        try{
+            
+            this.con = ( Connection ) DriverManager.getConnection( this.url, this.user, this.pass );
+            
+            int filas=tabla.getRowCount(), idCompra=0, i=0;
+            Integer[] idProductos = new Integer[filas];
+            
+            Conexion.stm = con.createStatement();
+            
+            Conexion.rss = stm.executeQuery("SELECT * FROM inventario ORDER BY id_producto DESC LIMIT " + filas);
+            
+            while( rss.next() ){
+                
+                idProductos[i] = rss.getInt( "id_producto" );
+                
+                i++;
+            }
+            
+            Conexion.stm = con.createStatement();
+            
+            Conexion.rss = stm.executeQuery( "SELECT * FROM compras" );
+            
+            while( rss.next() ){
+                
+                idCompra = rss.getInt( "id_compra" );
+            }
+            
+            for( Integer fila=0; fila<filas; fila++ ){
+                
+                String query = "INSERT INTO detalle_compras (id_producto, id_compra, precio_compra, cantidad) VALUES (?, ?, ?, ?);";
+
+                PreparedStatement preparedStmt = con.prepareStatement( query );
+                
+                preparedStmt.setInt( 1, idProductos[fila]);
+                preparedStmt.setInt( 2, idCompra );
+                preparedStmt.setInt( 3, Integer.parseInt( tabla.getValueAt( fila, 2 ).toString() ) );
+                preparedStmt.setInt( 4, Integer.parseInt( tabla.getValueAt( fila, 1 ).toString() ) );                
+                preparedStmt.execute();
+            }
+            
+            con.close();
+          }
+          catch (Exception e){
+              
+              System.err.println("¡Hubo un error!");
+              System.err.println(e.getMessage());
+          }
+    }
+    
+    public boolean validarIdentidadRepetidaCliente( String identidad )
+    {
+        String estado = "";
+        boolean verificador = false;
+        
+        try
+        {
+            Conexion.con = (com.mysql.jdbc.Connection) DriverManager.getConnection(Conexion.url, Conexion.user, Conexion.pass);
+            Conexion.stm = con.createStatement();
+            Conexion.rss = stm.executeQuery("select * from clientes");
+            
+            while (rss.next())
+            {
+                if (identidad.equals(rss.getString("identidad")))
+                {
+                    JOptionPane.showMessageDialog( null, "El número de indentidad ingresado ya se encuentra registrado.", "¡Error!", JOptionPane.ERROR_MESSAGE );
+                    verificador = true;
+                }
+            }
+            
+            con.close();
+        }
+        catch (SQLException e){
+            estado = "Error de conexión: " + e.toString();
+            JOptionPane.showMessageDialog(null, estado);
+        } catch (Exception ex) {
+            Logger.getLogger(Conexion.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        return verificador;
     }
 }
