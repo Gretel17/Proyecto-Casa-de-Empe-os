@@ -45,7 +45,7 @@ public class Conexion
     
     private static final String driver = "com.mysql.jdbc.Driver";
     private static final String user = "root";
-    private static final String pass = "monkey98";
+    private static final String pass = "123456";
     private static final String url = "jdbc:mysql://localhost:3306/bdd_poo";
     
      public void conector() {

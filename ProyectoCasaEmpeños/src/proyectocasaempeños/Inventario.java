@@ -279,8 +279,7 @@ public class Inventario extends javax.swing.JFrame {
     }//GEN-LAST:event_btnCancelarActionPerformed
 
     private void btnVolverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVolverActionPerformed
-        Clear_Table();
-        con.llenarTablaInventario(tblInventario);
+        
        
     }//GEN-LAST:event_btnVolverActionPerformed
 
@@ -350,7 +349,11 @@ public class Inventario extends javax.swing.JFrame {
         Validaciones val = new Validaciones();
         val.validarEspacios(evt);
         val.validarNumeros(evt);
-        
+        if(val.validarLongitud(evt, txtPrecioVenta.getText().length(), 2, 10)==true){
+            this.lblAvisoPrecio.setText("Dato no valido");
+        }else{
+            this.lblAvisoPrecio.setText(null);
+        }
     }//GEN-LAST:event_txtPrecioVentaKeyTyped
 
     private void txtCantidadKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtCantidadKeyTyped
@@ -358,11 +361,21 @@ public class Inventario extends javax.swing.JFrame {
         Validaciones val = new Validaciones();
         val.validarEspacios(evt);
         val.validarNumeros(evt);
+        if(val.validarLongitud(evt, txtCantidad.getText().length(), 0, 10)==true){
+            this.lblAvisoCantidad.setText("Dato no valido");
+        }else{
+            this.lblAvisoCantidad.setText(null);
+        }
         
     }//GEN-LAST:event_txtCantidadKeyTyped
 
     private void txtNombreProductoKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtNombreProductoKeyTyped
-        
+        Validaciones val = new Validaciones();
+        if(val.validarLongitud(evt, txtNombreProducto.getText().length(), 5, 100)==true){
+            this.lblAvisoNombre.setText("Datos no validos");
+        }else{
+            this.lblAvisoNombre.setText(null);
+        }
     }//GEN-LAST:event_txtNombreProductoKeyTyped
 
     private void cmbEstadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbEstadoActionPerformed
@@ -382,12 +395,6 @@ public class Inventario extends javax.swing.JFrame {
         }else{
             if(val.campoVacio(this.txtNombreProducto)==2){
                 this.lblAvisoNombre.setText("Nombre invalido.");
-            }else{
-                if(val.validarLongitud(evt, txtNombreProducto.getText().length(), 5, 100)==true){
-                    this.lblAvisoNombre.setText("Datos no validos");
-                }else{
-                    this.lblAvisoNombre.setText(null);
-                }
             }
         }
         
@@ -400,12 +407,6 @@ public class Inventario extends javax.swing.JFrame {
         }else{
             if(val.campoVacio(this.txtCantidad)==2){
                 this.lblAvisoCantidad.setText("Cantidad invalida.");
-            }else{
-                if(val.validarLongitud(evt, txtCantidad.getText().length(), 0, 11)==true){
-                    this.lblAvisoCantidad.setText("Dato no valido");
-                }else{
-                    this.lblAvisoCantidad.setText(null);
-                }
             }
         }
         
@@ -418,12 +419,6 @@ public class Inventario extends javax.swing.JFrame {
         }else{
             if(val.campoVacio(this.txtPrecioVenta)==2){
                 this.lblAvisoPrecio.setText("Precio invalido.");
-            }else{
-                if(val.validarLongitud(evt, txtPrecioVenta.getText().length(), 2, 11)==true){
-                    this.lblAvisoPrecio.setText("Dato no valido");
-                }else{
-                    this.lblAvisoPrecio.setText(null);
-                }
             }
         }
         
@@ -435,7 +430,9 @@ public class Inventario extends javax.swing.JFrame {
     }//GEN-LAST:event_txtBuscarKeyTyped
 
     private void btnConsultarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConsultarActionPerformed
-        // TODO add your handling code here:
+        this.txtBuscar.setText(null);
+        Clear_Table();
+        con.llenarTablaInventario(tblInventario);
     }//GEN-LAST:event_btnConsultarActionPerformed
 
     
