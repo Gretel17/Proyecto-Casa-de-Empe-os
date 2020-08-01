@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="null" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="7a0689b8-32d4-4bbd-bb4a-293c4605c67b">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<queryString>
+		<![CDATA[SELECT
+     inventario.`id_producto` AS inventario_id_producto,
+     inventario.`descripcion` AS inventario_descripcion,
+     inventario.`cantidad_disponible` AS inventario_cantidad_disponible,
+     inventario.`precio_referencial_venta` AS inventario_precio_referencial_venta,
+     inventario.`id_estado` AS inventario_id_estado,
+     inventario.`usuario_modifico` AS inventario_usuario_modifico,
+     inventario.`fecha_modifico` AS inventario_fecha_modifico,
+     estado.`id_estado` AS estado_id_estado,
+     estado.`descripcion` AS estado_descripcion
+FROM
+     `estado` estado INNER JOIN `inventario` inventario ON estado.`id_estado` = inventario.`id_estado`]]>
+	</queryString>
+	<field name="inventario_id_producto" class="java.lang.Integer"/>
+	<field name="inventario_descripcion" class="java.lang.String"/>
+	<field name="inventario_cantidad_disponible" class="java.lang.Integer"/>
+	<field name="inventario_precio_referencial_venta" class="java.lang.Integer"/>
+	<field name="inventario_id_estado" class="java.lang.Integer"/>
+	<field name="inventario_usuario_modifico" class="java.lang.String"/>
+	<field name="inventario_fecha_modifico" class="java.sql.Date"/>
+	<field name="estado_id_estado" class="java.lang.Integer"/>
+	<field name="estado_descripcion" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="83" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="555" height="37" uuid="bf4f6fb9-061a-4c61-91e5-6f6f0cb47d74"/>
+				<textElement textAlignment="Center">
+					<font size="24"/>
+				</textElement>
+				<text><![CDATA[Reporte Empeños]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="199" y="37" width="150" height="20" uuid="70cd4b25-6f3b-448b-9952-9259c9854224"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[Casa de Empeños Gomez]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="138" y="57" width="288" height="20" uuid="924c4e7a-d28e-47f3-b91b-05eba20d684b"/>
+				<text><![CDATA[Col. Santa Eduviges, calle principal a Villa de los Laureles
+]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="24" splitType="Stretch">
+			<textField pattern="MM/dd/yyyy">
+				<reportElement x="455" y="0" width="100" height="20" uuid="85597ff1-1add-458e-98ba-20e75db2ec00"/>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="22" splitType="Stretch">
+			<staticText>
+				<reportElement x="10" y="0" width="100" height="20" uuid="a079aafa-18a4-4a81-8672-35f524edbea2"/>
+				<text><![CDATA[Código Producto]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="110" y="0" width="100" height="20" uuid="8eb871a7-e894-4918-ac95-717fa9e680a1"/>
+				<text><![CDATA[Nombre del Producto]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="220" y="2" width="100" height="20" uuid="180ab755-0c1c-42d9-b0d5-7cc3d0a59e42"/>
+				<text><![CDATA[Cantidad disponible]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="320" y="0" width="46" height="20" uuid="11d6822a-9e6c-44e0-bde4-c39bb0a78f63"/>
+				<text><![CDATA[Precio]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="408" y="0" width="100" height="20" uuid="eb62185e-0a2f-42b7-a13d-98aafb7b77f8"/>
+				<text><![CDATA[Estado ]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="26" splitType="Stretch">
+			<textField>
+				<reportElement x="10" y="0" width="100" height="20" uuid="289204ee-2309-41d2-806e-8e4e46018d52"/>
+				<textFieldExpression><![CDATA[$F{inventario_id_producto}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="110" y="0" width="100" height="20" uuid="64e48a03-5405-43a1-acd2-2e2a6bdca8b6"/>
+				<textFieldExpression><![CDATA[$F{inventario_descripcion}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="220" y="2" width="100" height="20" uuid="36584987-3b16-4feb-8df7-bcf9afff64ab"/>
+				<textFieldExpression><![CDATA[$F{inventario_cantidad_disponible}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="320" y="0" width="64" height="20" uuid="dc601698-8517-40d3-9985-e63a6818285c"/>
+				<textFieldExpression><![CDATA[$F{inventario_precio_referencial_venta}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="408" y="0" width="100" height="20" uuid="9e9de654-1ed3-40ed-8ad6-3d473afcaf88"/>
+				<textFieldExpression><![CDATA[$F{estado_descripcion}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="19" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="45" splitType="Stretch">
+			<textField>
+				<reportElement x="455" y="25" width="100" height="20" uuid="48569b23-c216-4e8b-ba0e-b639ba5d69e6"/>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="26" splitType="Stretch"/>
+	</summary>
+</jasperReport>

@@ -10,6 +10,7 @@ package proyectocasaempeños;
  * @author grete
  */
 public class compartirdatoscliente {
+    public static boolean datos_llenos = false; 
     public static String id= null;
     public static String nombre= null;
     public static String apellido= null;

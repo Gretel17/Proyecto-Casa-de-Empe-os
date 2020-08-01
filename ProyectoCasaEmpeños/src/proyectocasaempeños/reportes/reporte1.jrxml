@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="null" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="b124dc15-27ea-4d5f-be1f-a8757ebe8909">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<queryString language="SQL">
+		<![CDATA[SELECT
+     inventario.`id_producto` AS inventario_id_producto,
+     inventario.`descripcion` AS inventario_descripcion,
+     inventario.`cantidad_disponible` AS inventario_cantidad_disponible,
+     inventario.`precio_referencial_venta` AS inventario_precio_referencial_venta,
+     inventario.`id_estado` AS inventario_id_estado,
+     inventario.`usuario_modifico` AS inventario_usuario_modifico,
+     inventario.`fecha_modifico` AS inventario_fecha_modifico,
+     estado.`id_estado` AS estado_id_estado,
+     estado.`descripcion` AS estado_descripcion
+FROM
+     `estado` estado INNER JOIN `inventario` inventario ON estado.`id_estado` = inventario.`id_estado`]]>
+	</queryString>
+	<field name="inventario_id_producto" class="java.lang.Integer"/>
+	<field name="inventario_descripcion" class="java.lang.String"/>
+	<field name="inventario_cantidad_disponible" class="java.lang.Integer"/>
+	<field name="inventario_precio_referencial_venta" class="java.lang.Integer"/>
+	<field name="inventario_id_estado" class="java.lang.Integer"/>
+	<field name="inventario_usuario_modifico" class="java.lang.String"/>
+	<field name="inventario_fecha_modifico" class="java.sql.Date"/>
+	<field name="estado_id_estado" class="java.lang.Integer"/>
+	<field name="estado_descripcion" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="79" splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="35" splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="61" splitType="Stretch">
+			<staticText>
+				<reportElement x="234" y="2" width="100" height="20" uuid="56a87858-6996-47a5-acce-2018957d029a"/>
+				<text><![CDATA[inventario_id_producto]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="415" y="2" width="100" height="20" uuid="71629ba7-3572-4343-8b29-62ca08af6fa0"/>
+				<text><![CDATA[inventario_descripcion]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="125" splitType="Stretch">
+			<textField>
+				<reportElement x="234" y="21" width="100" height="20" uuid="0b83796a-33b5-4e12-a7b4-a89c704286ce"/>
+				<textFieldExpression><![CDATA[$F{inventario_id_producto}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="415" y="39" width="100" height="20" uuid="ea41a3a2-62fb-4186-8acd-72dc72147c25"/>
+				<textFieldExpression><![CDATA[$F{inventario_descripcion}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="45" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="54" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>

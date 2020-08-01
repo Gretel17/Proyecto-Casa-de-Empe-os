@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="null" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="d565f67b-016a-4865-9baf-e087b8cc3c1d">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<queryString>
+		<![CDATA[SELECT
+     ventas.`id_empleado` AS ventas_id_empleado,
+     ventas.`fecha_venta` AS ventas_fecha_venta,
+     detalle_ventas.`Id_producto` AS detalle_ventas_Id_producto,
+     detalle_ventas.`precio_venta` AS detalle_ventas_precio_venta,
+     detalle_ventas.`cantidad` AS detalle_ventas_cantidad,
+     detalle_ventas.`id_venta` AS detalle_ventas_id_venta,
+     ventas.`id_venta` AS ventas_id_venta
+FROM
+     `ventas` ventas INNER JOIN `detalle_ventas` detalle_ventas ON ventas.`id_venta` = detalle_ventas.`id_venta`]]>
+	</queryString>
+	<field name="ventas_id_empleado" class="java.lang.Integer"/>
+	<field name="ventas_fecha_venta" class="java.sql.Date"/>
+	<field name="detalle_ventas_Id_producto" class="java.lang.Integer"/>
+	<field name="detalle_ventas_precio_venta" class="java.lang.Integer"/>
+	<field name="detalle_ventas_cantidad" class="java.lang.Integer"/>
+	<field name="detalle_ventas_id_venta" class="java.lang.Integer"/>
+	<field name="ventas_id_venta" class="java.lang.Integer"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="84" splitType="Stretch">
+			<staticText>
+				<reportElement x="170" y="0" width="185" height="37" uuid="0cc495a8-22da-41ac-9620-c681fbda33e6"/>
+				<textElement>
+					<font size="24"/>
+				</textElement>
+				<text><![CDATA[Reporte Ventas]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="181" y="37" width="157" height="20" uuid="14e2b5bd-ee4e-4754-8d21-080cfb66117e"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[Casa de empeños Gomez]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="111" y="57" width="287" height="20" uuid="1ba1691f-be91-473c-9867-43c94fad0b2e"/>
+				<text><![CDATA[Col. Santa Eduviges, calle principal a Villa de los Laureles
+]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="20" splitType="Stretch">
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="455" y="0" width="100" height="20" uuid="28479fb1-defb-476c-9ea9-a3f51aff5bec"/>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="25" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="100" height="20" uuid="ffb07f67-ba83-418c-adcf-27c4531b83d4"/>
+				<text><![CDATA[ventas_id_venta]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="100" y="0" width="70" height="20" uuid="13719c23-cc58-4322-aef4-0e3087d00366"/>
+				<text><![CDATA[ventas_fecha_venta]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="170" y="0" width="64" height="20" uuid="01b0d1a4-6c93-4197-b5f8-0430f8d05138"/>
+				<text><![CDATA[ventas_id_empleado]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="234" y="5" width="62" height="20" uuid="ff9a9113-8bbf-430e-8134-699949fa1044"/>
+				<text><![CDATA[detalle_ventas_Id_producto]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="296" y="5" width="69" height="20" uuid="74026934-77b3-4c9c-b92d-471e485089bc"/>
+				<text><![CDATA[detalle_ventas_precio_venta]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="365" y="5" width="100" height="20" uuid="d70b273c-44be-4845-8f14-ed08a9cfae41"/>
+				<text><![CDATA[detalle_ventas_cantidad]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="27" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="5" width="100" height="20" uuid="12b595fa-1e32-4cd8-92dc-83a1a37fd407"/>
+				<textFieldExpression><![CDATA[$F{ventas_id_venta}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="100" y="5" width="70" height="20" uuid="153c0230-2a08-4233-9077-731dee930293"/>
+				<textFieldExpression><![CDATA[$F{ventas_fecha_venta}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="170" y="5" width="64" height="20" uuid="8e97da19-7ee0-474f-a124-e9409cb70c32"/>
+				<textFieldExpression><![CDATA[$F{ventas_id_empleado}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="234" y="5" width="62" height="20" uuid="9af9a3a3-968a-401a-8356-16de234f9d59"/>
+				<textFieldExpression><![CDATA[$F{detalle_ventas_Id_producto}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="296" y="5" width="69" height="20" uuid="d0c7b87c-0bbe-42e3-801e-d8611b4c0b10"/>
+				<textFieldExpression><![CDATA[$F{detalle_ventas_precio_venta}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="365" y="5" width="100" height="20" uuid="01c9a377-871f-459f-ab52-0c92127880f2"/>
+				<textFieldExpression><![CDATA[$F{detalle_ventas_cantidad}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="21" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="22" splitType="Stretch">
+			<textField>
+				<reportElement x="455" y="2" width="100" height="20" uuid="2445c5e9-75a2-4f11-8351-0892d896ce85"/>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="21" splitType="Stretch"/>
+	</summary>
+</jasperReport>

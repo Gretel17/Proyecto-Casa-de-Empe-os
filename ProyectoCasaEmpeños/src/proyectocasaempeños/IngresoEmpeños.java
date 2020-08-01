@@ -18,6 +18,7 @@ import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumnModel;
 /**
  *
  * @author grete
@@ -26,7 +27,7 @@ public class IngresoEmpeños extends javax.swing.JFrame {
     
     ArrayList Lista = new ArrayList();
   //  DefaultListModel modelo= new DefaultListModel();
-    String Identidad,Nombre,Apellido,NombreArticulo;
+    String Identidad,Nombre,Apellido,NombreArticulo,cant,monto;
     int Cantidad;
     int id_cliente,id_estado,monto_acordado,id_producto;
     Double MontoAcordado;
@@ -44,13 +45,14 @@ public class IngresoEmpeños extends javax.swing.JFrame {
     /**
      * Creates new form IngresoEmpeños
      */
+     String[] rellenarDatosCliente = new String[3];
     public IngresoEmpeños() {
         initComponents();
-           Consulta();
+        Consulta();
         con.comboestado(cbestado);
         this.DeshabilitarCopyPaste();
-        
-      
+        compartirdatoscliente datoscliente = new compartirdatoscliente();
+        Consultacliente();
 
         
         
@@ -59,7 +61,9 @@ public class IngresoEmpeños extends javax.swing.JFrame {
     private void compartirdatos()
     {
         compartirdatoscliente compartir = new compartirdatoscliente();
-        
+        this.Identidad=compartirdatoscliente.id;
+        this.Nombre=compartirdatoscliente.nombre;
+        this.Apellido=compartirdatoscliente.apellido;
         
     }
     
@@ -77,6 +81,7 @@ public class IngresoEmpeños extends javax.swing.JFrame {
         
         
     }
+      
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -106,7 +111,8 @@ public class IngresoEmpeños extends javax.swing.JFrame {
         jLabel14 = new javax.swing.JLabel();
         txttelefono = new javax.swing.JTextField();
         txtcorreo = new javax.swing.JTextField();
-        txtdireccion = new javax.swing.JTextField();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        txtdireccion = new javax.swing.JTextArea();
         jPanel3 = new javax.swing.JPanel();
         jLabel7 = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
@@ -123,6 +129,8 @@ public class IngresoEmpeños extends javax.swing.JFrame {
         jPanel6 = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         listaarticulo = new javax.swing.JTable();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        listacliente = new javax.swing.JTable();
         btncontrato = new javax.swing.JButton();
         btnregresar = new javax.swing.JButton();
 
@@ -227,72 +235,74 @@ public class IngresoEmpeños extends javax.swing.JFrame {
             }
         });
 
-        txtdireccion.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtdireccionActionPerformed(evt);
-            }
-        });
+        txtdireccion.setColumns(20);
+        txtdireccion.setRows(5);
         txtdireccion.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 txtdireccionKeyTyped(evt);
             }
         });
+        jScrollPane1.setViewportView(txtdireccion);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(157, 157, 157)
-                .addComponent(jLabel2))
-            .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(35, 35, 35)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(jLabel3)
-                        .addGap(18, 18, 18)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(btningresarcliente, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addGap(157, 157, 157)
+                        .addComponent(jLabel2))
+                    .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(jLabel6)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtapellido, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jLabel5)
-                            .addComponent(jLabel4))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGap(35, 35, 35)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txtnombre)
-                            .addComponent(txtid))))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(jLabel14)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(txtdireccion))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addComponent(jLabel3)
+                                .addGap(18, 18, 18)
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(btningresarcliente, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, 148, Short.MAX_VALUE)))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                                .addComponent(jLabel6)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(txtapellido))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(jLabel5)
+                                    .addComponent(jLabel4))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(txtid)
+                                    .addComponent(txtnombre))))
+                        .addGap(3, 3, 3)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel12)
-                            .addComponent(jLabel13, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(txttelefono, javax.swing.GroupLayout.DEFAULT_SIZE, 89, Short.MAX_VALUE)
-                            .addComponent(txtcorreo)))))
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addComponent(jLabel14)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 181, Short.MAX_VALUE))
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel12)
+                                    .addComponent(jLabel13, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(txttelefono, javax.swing.GroupLayout.DEFAULT_SIZE, 111, Short.MAX_VALUE)
+                                    .addComponent(txtcorreo))
+                                .addGap(0, 0, Short.MAX_VALUE)))))
+                .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addComponent(jLabel2)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(18, 18, 18)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
                     .addComponent(jButton1))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(btningresarcliente)
-                .addGap(18, 18, 18)
+                .addGap(28, 28, 28)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
                     .addComponent(txtid, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -305,13 +315,15 @@ public class IngresoEmpeños extends javax.swing.JFrame {
                     .addComponent(jLabel13)
                     .addComponent(txtcorreo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel6)
-                    .addComponent(txtapellido, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel14)
-                    .addComponent(txtdireccion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel6)
+                            .addComponent(txtapellido, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel14))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(0, 0, Short.MAX_VALUE))
         );
 
@@ -373,22 +385,22 @@ public class IngresoEmpeños extends javax.swing.JFrame {
                     .addComponent(jLabel8)
                     .addComponent(jLabel10)
                     .addComponent(jLabel11))
+                .addGap(66, 66, 66)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addGap(65, 65, 65)
                         .addComponent(jLabel7))
+                    .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addComponent(txtmonto, javax.swing.GroupLayout.DEFAULT_SIZE, 124, Short.MAX_VALUE)
+                        .addComponent(txtcantidad, javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(txtnombrearticulo, javax.swing.GroupLayout.Alignment.LEADING))
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(txtnombrearticulo)
-                            .addComponent(txtcantidad)
-                            .addComponent(txtmonto)
-                            .addComponent(cbestado, 0, 108, Short.MAX_VALUE))
+                        .addComponent(cbestado, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(btnagregararticulo, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(btnmostrarempeño))))
-                .addContainerGap(38, Short.MAX_VALUE))
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(btnagregararticulo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(btnmostrarempeño, javax.swing.GroupLayout.DEFAULT_SIZE, 135, Short.MAX_VALUE))))
+                .addContainerGap(18, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -413,7 +425,7 @@ public class IngresoEmpeños extends javax.swing.JFrame {
                     .addComponent(btnmostrarempeño))
                 .addGap(18, 18, 18)
                 .addComponent(btnagregararticulo)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(40, Short.MAX_VALUE))
         );
 
         listaarticulo.setModel(new javax.swing.table.DefaultTableModel(
@@ -427,23 +439,72 @@ public class IngresoEmpeños extends javax.swing.JFrame {
                 "Nombre del articulo", "Cantidad", "Monto Total", "Estado"
             }
         ));
+        listaarticulo.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                listaarticuloMouseClicked(evt);
+            }
+        });
         jScrollPane2.setViewportView(listaarticulo);
+        if (listaarticulo.getColumnModel().getColumnCount() > 0) {
+            listaarticulo.getColumnModel().getColumn(0).setResizable(false);
+            listaarticulo.getColumnModel().getColumn(1).setResizable(false);
+            listaarticulo.getColumnModel().getColumn(2).setResizable(false);
+            listaarticulo.getColumnModel().getColumn(3).setResizable(false);
+        }
+
+        listacliente.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null}
+            },
+            new String [] {
+                "Identidad", "Nombre", "Apellido", "Telefono", "Correo", "Dirreccion"
+            }
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        listacliente.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                listaclienteMouseClicked(evt);
+            }
+        });
+        jScrollPane3.setViewportView(listacliente);
+        if (listacliente.getColumnModel().getColumnCount() > 0) {
+            listacliente.getColumnModel().getColumn(0).setResizable(false);
+            listacliente.getColumnModel().getColumn(1).setResizable(false);
+            listacliente.getColumnModel().getColumn(2).setResizable(false);
+            listacliente.getColumnModel().getColumn(3).setResizable(false);
+            listacliente.getColumnModel().getColumn(4).setResizable(false);
+            listacliente.getColumnModel().getColumn(5).setResizable(false);
+        }
 
         javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
         jPanel6.setLayout(jPanel6Layout);
         jPanel6Layout.setHorizontalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel6Layout.createSequentialGroup()
-                .addGap(112, 112, 112)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 495, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
+                .addGap(22, 22, 22)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 434, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 33, Short.MAX_VALUE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 434, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(26, 26, 26))
         );
         jPanel6Layout.setVerticalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel6Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(40, Short.MAX_VALUE))
+                .addGap(19, 19, 19)
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(32, Short.MAX_VALUE))
         );
 
         btncontrato.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
@@ -455,6 +516,11 @@ public class IngresoEmpeños extends javax.swing.JFrame {
         });
 
         btnregresar.setText("Regresar");
+        btnregresar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnregresarActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
@@ -465,10 +531,10 @@ public class IngresoEmpeños extends javax.swing.JFrame {
                 .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(btncontrato)
-                .addGap(214, 214, 214)
-                .addComponent(btnregresar)
-                .addGap(37, 37, 37))
+                .addComponent(btncontrato, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(227, 227, 227)
+                .addComponent(btnregresar, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(30, 30, 30))
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -487,22 +553,23 @@ public class IngresoEmpeños extends javax.swing.JFrame {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(195, 195, 195)
+                .addGap(285, 285, 285)
                 .addComponent(jLabel1)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
                 .addComponent(jLabel1)
-                .addGap(29, 29, 29)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 262, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -514,7 +581,7 @@ public class IngresoEmpeños extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+                .addGap(0, 20, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -522,6 +589,7 @@ public class IngresoEmpeños extends javax.swing.JFrame {
         );
 
         pack();
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
@@ -608,36 +676,6 @@ public class IngresoEmpeños extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_jButton1MouseClicked
 
-    private void txtidActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtidActionPerformed
-        // TODO add your handling code here:
-        
-        
-    }//GEN-LAST:event_txtidActionPerformed
-
-    private void txtidKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtidKeyTyped
-        // TODO add your handling code here:
-        Validaciones valida = new Validaciones();
-        
-        char caracter = evt.getKeyChar();
-        if ((caracter == KeyEvent.VK_SPACE))
-        {
-            JOptionPane.showMessageDialog(null, "No se pueden ingresar espacios.");
-            evt.consume();
-        }
-        int mensaje = 0;
-        
-        
-        
-        //char caracter = evt.getKeyChar();
-        if(Character.isLetter(caracter))
-        {
-            JOptionPane.showMessageDialog(null, "No se pueden ingresar letras.");
-            evt.consume();
-        }
-        
-        
-    }//GEN-LAST:event_txtidKeyTyped
-
     private void txtnombreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtnombreActionPerformed
         // TODO add your handling code here:
         
@@ -676,14 +714,6 @@ public class IngresoEmpeños extends javax.swing.JFrame {
         
         
     }//GEN-LAST:event_txtapellidoKeyTyped
-
-    private void txtdireccionKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtdireccionKeyTyped
-        // TODO add your handling code here:
-        Validaciones valida = new Validaciones();
-        valida.campoVacio(txtdireccion);
-        
-       
-    }//GEN-LAST:event_txtdireccionKeyTyped
 
     private void txtcorreoKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtcorreoKeyTyped
         // TODO add your handling code here:
@@ -776,9 +806,72 @@ public class IngresoEmpeños extends javax.swing.JFrame {
         
     }//GEN-LAST:event_txtmontoKeyTyped
 
-    private void txtdireccionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtdireccionActionPerformed
+    private void txtidKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtidKeyTyped
         // TODO add your handling code here:
-    }//GEN-LAST:event_txtdireccionActionPerformed
+        Validaciones valida = new Validaciones();
+
+        char caracter = evt.getKeyChar();
+        if ((caracter == KeyEvent.VK_SPACE))
+        {
+            JOptionPane.showMessageDialog(null, "No se pueden ingresar espacios.");
+            evt.consume();
+        }
+        int mensaje = 0;
+
+        //char caracter = evt.getKeyChar();
+        if(Character.isLetter(caracter))
+        {
+            JOptionPane.showMessageDialog(null, "No se pueden ingresar letras.");
+            evt.consume();
+        }
+
+    }//GEN-LAST:event_txtidKeyTyped
+
+    private void txtidActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtidActionPerformed
+        // TODO add your handling code here:
+
+    }//GEN-LAST:event_txtidActionPerformed
+
+    private void txtdireccionKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtdireccionKeyTyped
+        // TODO add your handling code here:
+        
+        
+        
+    }//GEN-LAST:event_txtdireccionKeyTyped
+
+    private void listaclienteMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_listaclienteMouseClicked
+        // TODO add your handling code here:
+       
+        int seleccion = this.listacliente.rowAtPoint(evt.getPoint()); 
+       // this.id_cliente = Integer.parseInt((String.valueOf(listacliente.getModel().getValueAt(seleccion, 0))));
+        this.txtid.setText(String.valueOf(listacliente.getModel().getValueAt(seleccion, 0))); 
+        this.txtnombre.setText(String.valueOf(listacliente.getModel().getValueAt(seleccion, 1)));
+        this.txtapellido.setText(String.valueOf(listacliente.getModel().getValueAt(seleccion, 2)));
+        this.txttelefono.setText(String.valueOf(listacliente.getModel().getValueAt(seleccion, 3)));
+        this.txtcorreo.setText(String.valueOf(listacliente.getModel().getValueAt(seleccion, 4)));
+        this.txtdireccion.setText(String.valueOf(listacliente.getModel().getValueAt(seleccion, 5)));
+       
+        ///
+    }//GEN-LAST:event_listaclienteMouseClicked
+
+    private void listaarticuloMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_listaarticuloMouseClicked
+        // TODO add your handling code here:
+       /* int seleccion = this.listaarticulo.rowAtPoint(evt.getPoint()); 
+        this.id_producto = Integer.parseInt((String.valueOf(listaarticulo.getModel().getValueAt(seleccion, 0))));
+        this.txtnombrearticulo.setText(String.valueOf(listaarticulo.getModel().getValueAt(seleccion, 1)));
+        this.txtcantidad.setText(String.valueOf(listaarticulo.getModel().getValueAt(seleccion, 2)));
+        this.txtmonto.setText(String.valueOf(listaarticulo.getModel().getValueAt(seleccion, 3)));
+      */ 
+        
+    }//GEN-LAST:event_listaarticuloMouseClicked
+
+    private void btnregresarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnregresarActionPerformed
+        // TODO add your handling code here:
+        Menu menu= new Menu();
+        menu.setVisible(true);
+        this.setVisible(false);
+        
+    }//GEN-LAST:event_btnregresarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -859,12 +952,15 @@ public class IngresoEmpeños extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JTable listaarticulo;
+    private javax.swing.JTable listacliente;
     public javax.swing.JTextField txtapellido;
     public javax.swing.JTextField txtcantidad;
     private javax.swing.JTextField txtcorreo;
-    private javax.swing.JTextField txtdireccion;
+    private javax.swing.JTextArea txtdireccion;
     public javax.swing.JTextField txtid;
     public javax.swing.JTextField txtmonto;
     public javax.swing.JTextField txtnombre;
@@ -880,7 +976,7 @@ public void Consulta()
             conn = (Connection) DriverManager.getConnection(url, user, pass);
             DefaultTableModel model = new DefaultTableModel();
             stm = conn.createStatement();
-            rss=stm.executeQuery("Select A.descripcion , A.cantidad_disponible, A.precio_referencial_venta , B.descripcion From inventario as A inner join estado as B on A.id_estado = B.id_estado ");
+            rss=stm.executeQuery("Select A.descripcion , A.cantidad_disponible, A.precio_referencial_venta , B.descripcion From inventario as A inner join estado as B on A.id_estado = B.id_estado where a.id_estado=1 order by id_producto desc LIMIT 5");
             
             model.addColumn("Nombre del Articulo");
             model.addColumn("Cantidad");
@@ -891,7 +987,7 @@ public void Consulta()
             
             while(rss.next())
             {
-              Object fila[] = new Object[4];
+              Object fila[] = new Object[4]; 
               
             for(int i =0;i<4;i++){
                 fila[i]=rss.getObject(i+1);
@@ -989,9 +1085,51 @@ public void Consulta()
             "Error de Conexion",JOptionPane.ERROR_MESSAGE);
         }   
      }
-       
      
+      public void Consultacliente()
+    {
+  
+        try
+        {
+            conn = (Connection) DriverManager.getConnection(url, user, pass);
+            DefaultTableModel model = new DefaultTableModel();
+            stm = conn.createStatement();
+            
+            rss=stm.executeQuery("Select a.identidad, a.nombre , a.apellido,a.telefono , a.correo_electronico , a.direccion from clientes as a ");
+           
+            model.addColumn("Identidad");
+            model.addColumn("Nombre");
+            model.addColumn("Apellido");
+            model.addColumn("Telefono");
+            model.addColumn("Correo Electronico");
+            model.addColumn("Direccion");
+            
+            
+            while(rss.next())
+            {
+              Object fila[] = new Object[6];
+              
+            for(int i =0;i<6;i++){
+                fila[i]=rss.getObject(i+1);
+            }
+              model.addRow(fila);
+            }
+            this.listacliente.setModel(model);
+        }        
+        catch (SQLException e){
+            JOptionPane.showMessageDialog(null, "Error" + e.getMessage(),
+            "Error de Conexion",JOptionPane.ERROR_MESSAGE);
+        }   
+     }
+            
+     public void RefreshTable2(){
+         this.listacliente.setModel(new DefaultTableModel());
+         Consultacliente();
+     }
+
 }
+
+
 
 
 

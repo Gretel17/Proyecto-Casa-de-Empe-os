@@ -73,7 +73,6 @@ public class ListaClientes extends javax.swing.JFrame {
         txtbuscar = new javax.swing.JTextField();
         jScrollPane3 = new javax.swing.JScrollPane();
         listabuscarcliente = new javax.swing.JTable();
-        btnAceptar = new javax.swing.JButton();
         jButton6 = new javax.swing.JButton();
         btnbuscar = new javax.swing.JButton();
         cbfiltro = new javax.swing.JComboBox<>();
@@ -117,14 +116,7 @@ public class ListaClientes extends javax.swing.JFrame {
         });
         jScrollPane3.setViewportView(listabuscarcliente);
 
-        btnAceptar.setText("Aceptar");
-        btnAceptar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnAceptarActionPerformed(evt);
-            }
-        });
-
-        jButton6.setText("Salir");
+        jButton6.setText("Regresar");
         jButton6.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton6ActionPerformed(evt);
@@ -149,20 +141,18 @@ public class ListaClientes extends javax.swing.JFrame {
                 .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 558, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap(48, Short.MAX_VALUE)
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
                         .addComponent(jLabel8)
-                        .addGap(18, 18, 18)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(txtbuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 346, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(48, 48, 48)
+                        .addGap(18, 18, 18)
                         .addComponent(btnbuscar)
-                        .addGap(57, 57, 57)
+                        .addGap(18, 18, 18)
                         .addComponent(cbfiltro, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(72, 72, 72))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
-                        .addComponent(btnAceptar)
-                        .addGap(18, 18, 18)
                         .addComponent(jButton6)
                         .addGap(145, 145, 145))))
         );
@@ -178,9 +168,7 @@ public class ListaClientes extends javax.swing.JFrame {
                 .addGap(27, 27, 27)
                 .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnAceptar)
-                    .addComponent(jButton6))
+                .addComponent(jButton6)
                 .addContainerGap(45, Short.MAX_VALUE))
         );
 
@@ -193,7 +181,7 @@ public class ListaClientes extends javax.swing.JFrame {
                 .addComponent(jLabel7)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(jPanel5Layout.createSequentialGroup()
-                .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, 706, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, Short.MAX_VALUE))
         );
         jPanel5Layout.setVerticalGroup(
@@ -209,7 +197,9 @@ public class ListaClientes extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -219,6 +209,7 @@ public class ListaClientes extends javax.swing.JFrame {
         );
 
         pack();
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
@@ -227,22 +218,6 @@ public class ListaClientes extends javax.swing.JFrame {
         this.setVisible(false);
         empeñito.setVisible(true);
     }//GEN-LAST:event_jButton6ActionPerformed
-
-    private void btnAceptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAceptarActionPerformed
-        // TODO add your handling code here:
-        //this.ConsultaBuscar(this.txtbuscar.getText());
-      //  this.RefreshTable();
-      
-      compartirdatoscliente compartir = new compartirdatoscliente();
-      compartirdatoscliente.id=null;
-      compartirdatoscliente.nombre=null;
-      compartirdatoscliente.apellido=null;
-      compartirdatoscliente.telefono=null;
-      compartirdatoscliente.correo=null;
-      compartirdatoscliente.direccion=null;
-      
-        
-    }//GEN-LAST:event_btnAceptarActionPerformed
 
     private void txtbuscarKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtbuscarKeyTyped
         // TODO add your handling code here:
@@ -266,14 +241,18 @@ public class ListaClientes extends javax.swing.JFrame {
     }//GEN-LAST:event_btnbuscarActionPerformed
 
     private void listabuscarclienteMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_listabuscarclienteMouseClicked
-        int seleccion = 0;
+        
         // TODO add your handling code here:
+        compartirdatoscliente compartir = new compartirdatoscliente();
+        int seleccion = this.listabuscarcliente.rowAtPoint(evt.getPoint()); 
+
         compartirdatoscliente.id =(String.valueOf(listabuscarcliente.getModel().getValueAt(seleccion, 0))); 
         compartirdatoscliente.nombre = (String.valueOf(listabuscarcliente.getModel().getValueAt(seleccion, 1)));
         compartirdatoscliente.apellido = (String.valueOf(listabuscarcliente.getModel().getValueAt(seleccion, 2)));
         compartirdatoscliente.telefono = (String.valueOf(listabuscarcliente.getModel().getValueAt(seleccion, 3)));
         compartirdatoscliente.correo = (String.valueOf(listabuscarcliente.getModel().getValueAt(seleccion, 4)));
         compartirdatoscliente.direccion = (String.valueOf(listabuscarcliente.getModel().getValueAt(seleccion, 5)));
+        compartirdatoscliente.datos_llenos=true;
         //
     }//GEN-LAST:event_listabuscarclienteMouseClicked
 
@@ -328,7 +307,6 @@ public class ListaClientes extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnAceptar;
     private javax.swing.JButton btnbuscar;
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.ButtonGroup buttonGroup2;
