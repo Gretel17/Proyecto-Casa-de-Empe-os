@@ -4,7 +4,8 @@ public class ProyectoCasaEmpeños {
     
     public static void main(String[] args) {
         
-        Menu menu = new Menu();
-        menu.setVisible(true);
+        InicioSesion inicioSesion = new InicioSesion();
+        
+        inicioSesion.setVisible(true);
     }
 }

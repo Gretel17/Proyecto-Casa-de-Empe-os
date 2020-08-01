@@ -1,21 +1,9 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package proyectocasaempeños;
 
 import javax.swing.table.DefaultTableModel;
 
-/**
- *
- * @author osegu
- */
 public class BuscarCliente extends javax.swing.JFrame {
-
-    /**
-     * Creates new form BuscarCliente
-     */
+    
     public BuscarCliente() {
         
         initComponents();
@@ -73,11 +61,6 @@ public class BuscarCliente extends javax.swing.JFrame {
 
         jLabel3.setText("Buscar:");
 
-        txtBuscarCliente.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtBuscarClienteActionPerformed(evt);
-            }
-        });
         txtBuscarCliente.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 txtBuscarClienteKeyTyped(evt);
@@ -224,10 +207,6 @@ public class BuscarCliente extends javax.swing.JFrame {
         
         ingresarCompras.setVisible(true);
     }//GEN-LAST:event_formWindowClosed
-
-    private void txtBuscarClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtBuscarClienteActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtBuscarClienteActionPerformed
 
     /**
      * @param args the command line arguments

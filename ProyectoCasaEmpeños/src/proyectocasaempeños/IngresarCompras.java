@@ -23,6 +23,13 @@ public class IngresarCompras extends javax.swing.JFrame {
         DeshabilitarCopiarPegar();
     }
     
+    public static Integer idEmpleado;
+    Conexion conexion = new Conexion();
+    int totalCompra=0;
+    boolean indicadorIngresarNuevoCliente = false,
+            validarAgregarCliente         = true,
+            validarAgregarProducto        = false;
+    
     private void DeshabilitarCopiarPegar(){
         
         this.txtNumeroIdentidadCliente.setTransferHandler(null);
@@ -58,14 +65,6 @@ public class IngresarCompras extends javax.swing.JFrame {
         }
         catch( Exception e ){}
     }
-    
-    Conexion conexion = new Conexion();
-    
-    String codigoUsuarioActual="2";
-    int totalCompra=0;
-    boolean indicadorIngresarNuevoCliente = false,
-            validarAgregarCliente         = true,
-            validarAgregarProducto        = false;
     
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -343,7 +342,7 @@ public class IngresarCompras extends javax.swing.JFrame {
                     .addComponent(txtCantidadProducto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel6)
                     .addComponent(btnEliminarProducto)
-                    .addComponent(txtPrecioProducto, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtPrecioProducto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -358,6 +357,11 @@ public class IngresarCompras extends javax.swing.JFrame {
         txtFecha.setEditable(false);
 
         btnRegresar.setText("Regresar");
+        btnRegresar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRegresarActionPerformed(evt);
+            }
+        });
 
         btnIngresarCompra.setText("Ingresar compra");
         btnIngresarCompra.addActionListener(new java.awt.event.ActionListener() {
@@ -449,7 +453,6 @@ public class IngresarCompras extends javax.swing.JFrame {
     }//GEN-LAST:event_txtTotalActionPerformed
 
     private void btnIngresarCompraActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnIngresarCompraActionPerformed
-        // TODO add your handling code here:
         
         if( indicadorIngresarNuevoCliente == true ){
             
@@ -464,8 +467,8 @@ public class IngresarCompras extends javax.swing.JFrame {
                     if( validarAgregarProducto ){
                         
                         conexion.ingresarCliente( this.txtNumeroIdentidadCliente.getText(), this.txtNombreCliente.getText(), this.txtApellidoCliente.getText(), "2" );
-                        conexion.ingresarCompraInventario(this.tblComprasIngresar);
-                        conexion.ingresarCompra( conexion.obtenerCodigoClienteIngresar( this.txtNumeroIdentidadCliente.getText() ), codigoUsuarioActual );
+                        conexion.ingresarCompraInventario( this.tblComprasIngresar );
+                        conexion.ingresarCompra( conexion.obtenerCodigoClienteIngresar( this.txtNumeroIdentidadCliente.getText() ), idEmpleado.toString() );
                         conexion.ingresarDetallesCompra( this.tblComprasIngresar );
                         
                         if( this.chkGerarFactura.isSelected() ){
@@ -500,8 +503,8 @@ public class IngresarCompras extends javax.swing.JFrame {
             
             if( validarAgregarProducto ){
                 
-                conexion.ingresarCompraInventario(this.tblComprasIngresar);
-                conexion.ingresarCompra( conexion.obtenerCodigoClienteIngresar( this.txtNumeroIdentidadCliente.getText() ), codigoUsuarioActual );
+                conexion.ingresarCompraInventario( this.tblComprasIngresar );
+                conexion.ingresarCompra( conexion.obtenerCodigoClienteIngresar( this.txtNumeroIdentidadCliente.getText() ), idEmpleado.toString() );
                 conexion.ingresarDetallesCompra( this.tblComprasIngresar );
                 
                 if( this.chkGerarFactura.isSelected() ){
@@ -572,7 +575,7 @@ public class IngresarCompras extends javax.swing.JFrame {
             
             modeloTabla.removeRow(this.tblComprasIngresar.getSelectedRow());
         }
-        if( this.tblComprasIngresar.getRowCount() == 0 ){
+        else if( this.tblComprasIngresar.getRowCount() == 0 ){
             
             validarAgregarProducto = false;
         }
@@ -584,8 +587,7 @@ public class IngresarCompras extends javax.swing.JFrame {
             
             evt.consume();
         }
-        
-        if( !Character.isDigit( evt.getKeyChar() ) ){
+        else if( !Character.isDigit( evt.getKeyChar() ) ){
             
             evt.consume();
         }
@@ -597,8 +599,7 @@ public class IngresarCompras extends javax.swing.JFrame {
             
             evt.consume();
         }
-        
-        if( Character.isDigit( evt.getKeyChar() ) ){
+        else if( Character.isDigit( evt.getKeyChar() ) ){
             
             evt.consume();
         }
@@ -610,8 +611,7 @@ public class IngresarCompras extends javax.swing.JFrame {
             
             evt.consume();
         }
-        
-        if( Character.isDigit( evt.getKeyChar() ) ){
+        else if( Character.isDigit( evt.getKeyChar() ) ){
             
             evt.consume();
         }
@@ -623,8 +623,7 @@ public class IngresarCompras extends javax.swing.JFrame {
             
             evt.consume();
         }
-        
-        if( this.txtNombreProducto.getText().length() >= 100 ){
+        else if( this.txtNombreProducto.getText().length() >= 100 ){
             
             evt.consume();
         }
@@ -636,8 +635,7 @@ public class IngresarCompras extends javax.swing.JFrame {
             
             evt.consume();
         }
-        
-        if( this.txtCantidadProducto.getText().length() >= 11 ){
+        else if( this.txtCantidadProducto.getText().length() >= 11 ){
             
             evt.consume();
         }
@@ -684,6 +682,15 @@ public class IngresarCompras extends javax.swing.JFrame {
         this.txtApellidoCliente.setEditable(true);
         this.txtApellidoCliente.setEnabled(true);
     }//GEN-LAST:event_btnIngresarNuevoClienteActionPerformed
+
+    private void btnRegresarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegresarActionPerformed
+        
+        Menu menu = new Menu();
+        
+        menu.setVisible(true);
+        
+        this.dispose();
+    }//GEN-LAST:event_btnRegresarActionPerformed
     
     /**
      * @param args the command line arguments

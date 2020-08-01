@@ -45,8 +45,14 @@ public class Conexion
     
     private static final String driver = "com.mysql.jdbc.Driver";
     private static final String user = "root";
-    private static final String pass = "123456";
-    private static final String url = "jdbc:mysql://localhost:3306/bdd_poo";
+    private static final String pass = "";
+    private static final String url = "jdbc:mysql://localhost:3307/bdd_poo";
+    
+    public static Integer idEmpleado, idPuestoEmpleado;
+    public static String numeroIdentidadEmpleado;
+    public static String nombreCompletoEmpleado;
+    public String correoRecuperacion=null;
+    public Boolean usuarioCoincideRecuperarContrasena=false, ocuparContrasena=true;
     
      public void conector() {
 
@@ -544,13 +550,16 @@ public class Conexion
             
             for( Integer fila=0; fila<filas; fila++ ){
                 
-                String query = "INSERT INTO inventario (descripcion, cantidad_disponible, id_estado) VALUES (?, ?, '3');";
-
+                String query = "INSERT INTO inventario (descripcion, cantidad_disponible, precio_referencial_venta, id_estado) VALUES (?, ?, ?, '3');";
+                
                 PreparedStatement preparedStmt = con.prepareStatement( query );
                 
+                Integer precioReferencialVenta = (int) Math.round( Double.parseDouble( tabla.getValueAt( fila, 2 ).toString() ) + ( Double.parseDouble(tabla.getValueAt( fila, 2 ).toString() ) * 0.30 ) );
+                
                 preparedStmt.setString ( 1, ( String ) tabla.getValueAt( fila, 0 ).toString() );
-                preparedStmt.setInt    ( 2, ( Integer ) Integer.parseInt( tabla.getValueAt( fila, 2 ).toString() ) );
-
+                preparedStmt.setInt    ( 2, ( Integer ) Integer.parseInt( tabla.getValueAt( fila, 1 ).toString() ) );
+                preparedStmt.setInt    ( 3, ( Integer ) precioReferencialVenta );
+                
                 preparedStmt.execute();
             }
             
@@ -629,7 +638,7 @@ public class Conexion
             
             Conexion.stm = con.createStatement();
             
-            Conexion.rss = stm.executeQuery("SELECT * FROM inventario ORDER BY id_producto DESC LIMIT " + filas);
+            Conexion.rss = stm.executeQuery( "SELECT * FROM inventario ORDER BY id_producto DESC LIMIT " + filas );
             
             while( rss.next() ){
                 
@@ -653,7 +662,7 @@ public class Conexion
 
                 PreparedStatement preparedStmt = con.prepareStatement( query );
                 
-                preparedStmt.setInt( 1, idProductos[fila]);
+                preparedStmt.setInt( 1, idProductos[ fila ] );
                 preparedStmt.setInt( 2, idCompra );
                 preparedStmt.setInt( 3, Integer.parseInt( tabla.getValueAt( fila, 2 ).toString() ) );
                 preparedStmt.setInt( 4, Integer.parseInt( tabla.getValueAt( fila, 1 ).toString() ) );                
@@ -662,11 +671,11 @@ public class Conexion
             
             con.close();
           }
-          catch (Exception e){
-              
-              System.err.println("¡Hubo un error!");
-              System.err.println(e.getMessage());
-          }
+        catch( Exception e ){
+
+            System.err.println("¡Hubo un error!");
+            System.err.println(e.getMessage());
+        }
     }
     
     public boolean validarIdentidadRepetidaCliente( String identidad )
@@ -892,7 +901,7 @@ public class Conexion
             stm.setInt(3, MontoAcordado);
             stm.setInt(4, estado);
             stm.executeUpdate();
-             JOptionPane.showMessageDialog(null,"Los datos del articulo fueron insertados correctamente");
+            JOptionPane.showMessageDialog(null,"Los datos del articulo fueron insertados correctamente");
         }
         catch (SQLException e) {
             JOptionPane.showMessageDialog(null,"Ocurrio un problema en la base de datos"+e);
@@ -952,9 +961,89 @@ public class Conexion
         
          return lista;
      }
-     
     
+    public boolean ingresarInicioSesion( String usuario, String contrasenia ){
+        
+        String usuarioBaseDatos=null, contraseniaBaseDatos=null;
+        Boolean usuarioCoincide=false, contraseniaCoincide=false;
+        
+        try{
+            
+            Conexion.Encriptar( contrasenia );
+            
+            this.con = ( Connection ) DriverManager.getConnection( this.url, this.user, this.pass );
+            
+            Conexion.stm = con.createStatement();
+            
+            Conexion.rss = stm.executeQuery( "SELECT * FROM empleados WHERE usuario = '" + Conexion.Encriptar( usuario ) + "' AND id_estado = 4;" );
+            
+            while( rss.next() ){
+                
+                numeroIdentidadEmpleado = rss.getString( "identidad" );
+                nombreCompletoEmpleado = rss.getString( "nombre" ) + " " + rss.getString( "apellido" );
+                idPuestoEmpleado = rss.getInt( "id_puesto" );
+                usuarioBaseDatos = rss.getString( "usuario" );
+                contraseniaBaseDatos = rss.getString( "contrasenia" );
+                idEmpleado = rss.getInt( "id_empleado" );
+                correoRecuperacion = rss.getString( "correo_electronico" );
+            }
+            
+            if( usuarioBaseDatos.equals( Conexion.Encriptar( usuario ) ) ){
+                
+                usuarioCoincide = true;
+                usuarioCoincideRecuperarContrasena = true;
+            }
+            else{
+                
+                usuarioCoincide = false;
+            }
+            
+            if( ocuparContrasena ){
+                
+                if( contraseniaBaseDatos.equals( Conexion.Encriptar( contrasenia ) ) ){
+
+                    contraseniaCoincide = true;
+                }
+                else{
+
+                    contraseniaCoincide = false;
+                }
+            }
+            
+            con.close();
+        }
+        catch( Exception e ){}
+        
+        if( !usuarioCoincide ){
+            
+            JOptionPane.showMessageDialog( null, "El usuario que ingresó no existe o se encuentra inhabilitado.", "Usuario inválido", JOptionPane.ERROR_MESSAGE );
+        }
+        else if( !contraseniaCoincide ){
+            
+            if( ocuparContrasena ){
+                
+                JOptionPane.showMessageDialog( null, "La contraseña es incorrecta.", "Contraseña incorrecta", JOptionPane.ERROR_MESSAGE );
+            }
+        }
+        
+        return contraseniaCoincide;
+    }
     
-
-
+    public void cambiarContrasena( String nuevaContrasena ){
+        
+        try{
+            
+            this.con = ( Connection ) DriverManager.getConnection( this.url, this.user, this.pass );
+            
+            Conexion.stm = con.createStatement();
+            
+            stm.executeUpdate( "UPDATE empleados SET contrasenia = '" + Conexion.Encriptar( nuevaContrasena ) + "' WHERE id_empleado = " + idEmpleado );
+            
+            con.close();
+        }
+        catch( Exception e ){
+            
+            JOptionPane.showMessageDialog(null, e);
+        }
+    }
 }
