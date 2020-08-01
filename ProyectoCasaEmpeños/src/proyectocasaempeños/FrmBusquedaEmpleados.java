@@ -113,6 +113,9 @@ public class FrmBusquedaEmpleados extends javax.swing.JFrame {
             }
         });
         txtBusqueda.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txtBusquedaKeyPressed(evt);
+            }
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 txtBusquedaKeyTyped(evt);
             }
@@ -203,8 +206,7 @@ public class FrmBusquedaEmpleados extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void txtBusquedaKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtBusquedaKeyTyped
-        Conexion con = new Conexion();
-        con.BarraBusqueda("empleados", this.txtBusqueda.getText(), this.tableEmpleados, 13, this.Filtro);
+
     }//GEN-LAST:event_txtBusquedaKeyTyped
 
     private void txtBusquedaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtBusquedaActionPerformed
@@ -295,6 +297,11 @@ public class FrmBusquedaEmpleados extends javax.swing.JFrame {
         this.txtBusqueda.setEnabled(true);
         
     }//GEN-LAST:event_rdbDespedidosActionPerformed
+
+    private void txtBusquedaKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtBusquedaKeyPressed
+        Conexion con = new Conexion();
+        con.BarraBusqueda("empleados", this.txtBusqueda.getText(), this.tableEmpleados, 13, this.Filtro);
+    }//GEN-LAST:event_txtBusquedaKeyPressed
 
     /**
      * @param args the command line arguments

@@ -110,6 +110,11 @@ public class Menu extends javax.swing.JFrame {
 
         btnIngresarVenta.setIcon(new javax.swing.ImageIcon(getClass().getResource("/proyectocasaempeños/Imágenes/venta.png"))); // NOI18N
         btnIngresarVenta.setText("Ingresar venta");
+        btnIngresarVenta.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnIngresarVentaActionPerformed(evt);
+            }
+        });
         pnlPrincipal.add(btnIngresarVenta, new org.netbeans.lib.awtextra.AbsoluteConstraints(6, 128, 248, -1));
 
         btnInventario.setIcon(new javax.swing.ImageIcon(getClass().getResource("/proyectocasaempeños/Imágenes/inventario.png"))); // NOI18N
@@ -225,6 +230,12 @@ public class Menu extends javax.swing.JFrame {
         empleados.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btnUsuarioActionPerformed
+
+    private void btnIngresarVentaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnIngresarVentaActionPerformed
+        FrmVentas ventas = new FrmVentas();
+        ventas.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_btnIngresarVentaActionPerformed
 
     /**
      * @param args the command line arguments

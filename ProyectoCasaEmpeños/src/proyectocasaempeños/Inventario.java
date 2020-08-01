@@ -11,7 +11,7 @@ import java.awt.event.KeyEvent;
 import java.text.SimpleDateFormat;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
-import javax.swing.table.DefaultTableModel;
+import javax.swing.table.DefaultTableModel; //Aloja
 
 /**
  *
@@ -300,7 +300,7 @@ public class Inventario extends javax.swing.JFrame {
                     this.txtCantidad.requestFocus();
                 }else{
                     Clear_Table();
-                    con.modificar(this.txtNombreProducto.getText(), Integer.parseInt(this.txtCantidad.getText()), Integer.parseInt(this.txtPrecioVenta.getText()), con.obtenerCodigoCmbEstadoObjetos(this.cmbEstado.getSelectedItem().toString())/*this.cmbEstado.getSelectedIndex()+6*/, con.nombreCompletoEmpleado, this.fechaActual, this.codigo);
+                    con.modificar(this.txtNombreProducto.getText(), Integer.parseInt(this.txtCantidad.getText()), Integer.parseInt(this.txtPrecioVenta.getText()), con.obtenerCodigoCmbEstadoObjetos(this.cmbEstado.getSelectedItem().toString())/*this.cmbEstado.getSelectedIndex()+6*/, con.numeroIdentidadEmpleado, this.fechaActual, this.codigo);
                     con.llenarTablaInventario(tblInventario);
                     this.txtNombreProducto.setText(null);
                     this.txtPrecioVenta.setText(null);

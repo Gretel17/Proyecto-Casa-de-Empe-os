@@ -77,15 +77,15 @@ public class Conexion
         JOptionPane.showMessageDialog(null, estado);
     }
      
-     public void Mantenimiento_Empleados(String accion, Integer id_empleado, String identidad, String nombre, String apellido, String usuario, String contrasenia, Integer salario, String telefono, String correo, String direccion, Date fecha_nacimiento, Integer id_puesto, Integer id_estado)
-     {
+    public void Mantenimiento_Empleados(String accion, Integer id_empleado, String identidad, String nombre, String apellido, String usuario, String contrasenia, Integer salario, String telefono, String correo, String direccion, Date fecha_nacimiento, Integer id_puesto, Integer id_estado, String identidaduser)
+    {
         String estado = "";
         
         try
         {
             String query;
             Conexion.con = (Connection) DriverManager.getConnection(Conexion.url, Conexion.user, Conexion.pass);
-            query = "{CALL mantenimiento_empleados(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)}";
+            query = "{CALL mantenimiento_empleados(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)}";
 
             CallableStatement cs = con.prepareCall(query);
             cs.setString(1, accion);
@@ -102,6 +102,7 @@ public class Conexion
             cs.setDate(12, fecha_nacimiento);
             cs.setInt (13, id_puesto);
             cs.setInt (14, id_estado+3);
+            cs.setString(15, identidaduser);
             cs.executeUpdate();
             con.close();
         }
@@ -1141,5 +1142,268 @@ public class Conexion
         }
         
         JOptionPane.showMessageDialog(null, mensaje);
+    }
+    
+       public void ConsultarProductosVenta(JTable tabla_productos)
+    {
+        String estado = "";
+        
+        try
+        {
+            Conexion.con = (com.mysql.jdbc.Connection) DriverManager.getConnection(Conexion.url, Conexion.user, Conexion.pass);
+            Conexion.stm = con.createStatement();
+            Conexion.rss = stm.executeQuery("select id_producto, descripcion, precio_referencial_venta, cantidad_disponible from inventario where id_estado = 3 and cantidad_disponible !=0");
+            DefaultTableModel modelo = (DefaultTableModel) tabla_productos.getModel();
+            
+            
+            while (rss.next())
+            {
+
+                Object [] fila = new Object[4];
+
+                fila[0] = rss.getObject(1);
+                fila[1] = rss.getObject(2);
+                fila[2] = rss.getObject(3);
+                fila[3] = rss.getObject(4);
+
+                modelo.addRow(fila);
+                
+            }
+            
+            tabla_productos.setModel(modelo);
+            
+            DefaultTableCellRenderer centrado = new DefaultTableCellRenderer();
+            centrado.setHorizontalAlignment(JLabel.CENTER);
+            
+            for (int i = 0; i<4; i++)
+            {
+                tabla_productos.getColumnModel().getColumn(i).setCellRenderer(centrado);
+            }
+        }
+        catch (SQLException e){
+            estado = "Error de Conexion: " + e.toString();
+            JOptionPane.showMessageDialog(null, estado);
+        }
+    }  
+   
+    public boolean ActualizarInventarioProductosVenta(String accion, Integer id_producto, Integer cantidad)
+    {
+        String estado = "";
+        boolean operacion_exitosa = false;
+        
+        try
+        {
+            String query;
+            
+            Conexion.con = (Connection) DriverManager.getConnection(Conexion.url, Conexion.user, Conexion.pass);
+            query = "call ActualizarInventarioVenta(?, ?, ?, ?);";
+
+            CallableStatement cs = con.prepareCall(query);
+            cs.setString(1, accion);
+            cs.setInt   (2, id_producto);
+            cs.setInt   (3, cantidad);
+            cs.registerOutParameter(4, java.sql.Types.INTEGER);
+            cs.executeUpdate();
+            Integer verificador = cs.getInt(4);
+            cs.close();
+            con.close();
+            
+            if (verificador == 0)
+            {
+                JOptionPane.showMessageDialog(null, "No hay suficientes unidades del producto en el inventario", "¡Error!", JOptionPane.ERROR_MESSAGE);
+            }
+            else if (verificador == 1)
+            {
+                //JOptionPane.showMessageDialog(null, "Operación realizada con éxito");
+                operacion_exitosa = true;
+            }
+        }
+        catch (SQLException e){
+            estado = "Error de Conexion: " + e.toString();
+            JOptionPane.showMessageDialog(null, estado);
+        }
+        
+        return operacion_exitosa;
+    }
+    
+ 
+    public boolean AgregarProductoVenta(JTable tabla_agregar_productos, Integer id, String nombre, Integer precio, Integer cantidad, Integer cantidad_disponible)
+    {
+        boolean producto_encontrado = false;
+        boolean operacion_realizada = false;
+            
+        DefaultTableModel modelo_tabla_agregar_productos = (DefaultTableModel) tabla_agregar_productos.getModel();
+        
+        for (int i = 0; i<tabla_agregar_productos.getRowCount(); i++)
+        {
+            if (id == Integer.valueOf(String.valueOf(tabla_agregar_productos.getModel().getValueAt(i, 0))))
+            {
+                producto_encontrado = true;
+                Integer cantidad_nueva = (Integer.valueOf(String.valueOf(tabla_agregar_productos.getModel().getValueAt(i, 3))) + cantidad);
+                if(this.ActualizarInventarioProductosVenta("restar", id, cantidad) == true)
+                {                 
+                    Object cantidad_actualizada = cantidad_nueva;
+                    tabla_agregar_productos.getModel().setValueAt(cantidad_actualizada, i, 3);
+                    operacion_realizada = true;
+                }
+            }
+        }
+        
+        if (producto_encontrado == false)
+        {
+            if(this.ActualizarInventarioProductosVenta("restar", id, cantidad) == true)
+            {                 
+                modelo_tabla_agregar_productos.addRow( new Object[]{id, nombre, precio, cantidad});
+                operacion_realizada = true;
+            }    
+        }
+        
+        DefaultTableCellRenderer centrado = new DefaultTableCellRenderer();
+        centrado.setHorizontalAlignment(JLabel.CENTER);
+            
+        for (int i = 0; i<3; i++)
+        {
+            tabla_agregar_productos.getColumnModel().getColumn(i).setCellRenderer(centrado);
+        }
+        
+        return operacion_realizada;
+    }
+    
+    public void EliminarProductoVenta(JTable tabla_agregar)
+    {
+        DefaultTableModel modelo = (DefaultTableModel) tabla_agregar.getModel();
+        
+        if (tabla_agregar.getSelectedRowCount() == 1)
+        {
+            int id, cantidad_registrada;
+            
+            id = Integer.valueOf(String.valueOf(tabla_agregar.getModel().getValueAt(tabla_agregar.getSelectedRow(), 0)));
+            cantidad_registrada = Integer.valueOf(String.valueOf(tabla_agregar.getModel().getValueAt(tabla_agregar.getSelectedRow(), 3)));
+            
+            if(this.ActualizarInventarioProductosVenta("agregar", id, cantidad_registrada) == true)
+            {                 
+                modelo.removeRow(tabla_agregar.getSelectedRow());
+            }    
+        }
+        else if (tabla_agregar.getSelectedRowCount() == 0)
+        {
+            //JOptionPane.showMessageDialog(null, "Error! No ha seleccionado ningun registro");
+        }
+    }
+    
+    public void RestaurarInventarioProducto(JTable tabla_agregar)
+    {
+        DefaultTableModel modelo = (DefaultTableModel) tabla_agregar.getModel();
+        
+        for (int i=0; i<tabla_agregar.getRowCount(); i++)
+        {
+            int id, cantidad_registrada;
+           
+            id = Integer.valueOf(String.valueOf(tabla_agregar.getModel().getValueAt(i, 0)));
+            cantidad_registrada = Integer.valueOf(String.valueOf(tabla_agregar.getModel().getValueAt(i, 3)));
+           
+            this.ActualizarInventarioProductosVenta("agregar", id, cantidad_registrada); 
+        }      
+    }
+    
+    
+    public Integer SumarSubtotal(JTable tabla_agregar)
+    {
+        int subtotal = 0;
+        for (int i = 0; i < tabla_agregar.getRowCount(); i++)
+        {
+            int amount = (Integer.valueOf(String.valueOf(tabla_agregar.getModel().getValueAt(i, 2))) * Integer.valueOf(String.valueOf(tabla_agregar.getModel().getValueAt(i, 3))));
+            subtotal += amount;
+        }
+        
+        return subtotal;
+    }
+    
+    
+    public Integer ConsultarIdVenta()
+    {
+        String estado = "";
+        Integer Id = null;
+        
+        try
+        {
+            Conexion.con = (com.mysql.jdbc.Connection) DriverManager.getConnection(Conexion.url, Conexion.user, Conexion.pass);
+            Conexion.stm = con.createStatement();
+            Conexion.rss = stm.executeQuery("select * from ventas");
+            
+            while (rss.next())
+            {
+                Id = rss.getInt("id_venta");
+            }
+            
+            con.close();
+            
+        }
+        catch (SQLException e){
+            estado = "Error de Conexion: " + e.toString();
+            JOptionPane.showMessageDialog(null, estado);
+        }
+
+        return Id;
+    }
+    
+    public void IngresarVenta(Integer id, String identidad, String nombre, String apellido, Double isv)
+    {
+        String estado = "";
+        Calendar calendario = Calendar.getInstance();
+        java.sql.Date startDate = new java.sql.Date( calendario.getTime().getTime() );
+        
+        try
+        {
+            
+            this.con = ( Connection ) DriverManager.getConnection( this.url, this.user, this.pass );
+            
+            String query = "INSERT INTO ventas (id_empleado, fecha_venta, identidad, nombre, apellido, isv) VALUES (?, ?, ?, ?, ?)";
+            
+            PreparedStatement preparedStmt = con.prepareStatement( query );
+            
+            preparedStmt.setInt    (1, id);
+            preparedStmt.setDate   (2, startDate);
+            preparedStmt.setString (3, identidad);
+            preparedStmt.setString (4, nombre);
+            preparedStmt.setString (5, apellido);
+            preparedStmt.setDouble (6, isv);
+            
+            preparedStmt.execute();
+            
+            con.close();
+        }
+        catch (Exception e)
+        {
+            estado = "Error de Conexion: " + e.toString();
+            JOptionPane.showMessageDialog(null, estado);
+        }
+    }
+    
+    public void IngresarDetalleVenta(Integer id_venta, Integer id_producto, Integer precio, Integer cantidad)
+    {
+        String estado = "";
+        
+        try
+        {
+            String query;
+            Conexion.con = (Connection) DriverManager.getConnection(Conexion.url, Conexion.user, Conexion.pass);
+            query = "INSERT INTO detalle_ventas (id_venta, id_producto, precio_venta, cantidad) VALUES (?, ?, ?, ?)";
+            
+            PreparedStatement preparedStmt = con.prepareStatement( query );
+            
+            preparedStmt.setInt    (1, id_venta);
+            preparedStmt.setInt (2, id_producto);
+            preparedStmt.setInt (3, precio);
+            preparedStmt.setInt (4, cantidad);
+
+            preparedStmt.execute();
+            
+            con.close();
+        }
+        catch (SQLException e){
+            estado = "Error de Conexion: " + e.toString();
+            JOptionPane.showMessageDialog(null, estado);
+        } 
     }
 }
