@@ -5,12 +5,27 @@ public class Menu extends javax.swing.JFrame {
     public Menu() {
         
         initComponents();
-        
+        compartirdatos();
+        this.lblUsuarioLinea.setText(nombreCompletoEmpleado);
         
     }
     
-    public static Integer idEmpleado, idPuestoEmpleado;
-    public static String nombreCompletoEmpleado, numeroIdentidadEmpleado;
+    public Integer idEmpleado, idPuestoEmpleado;
+    public String nombreCompletoEmpleado, numeroIdentidadEmpleado;
+    
+    private void compartirdatos() {
+        Conexion con = new Conexion();
+        
+        idEmpleado = con.idEmpleado;
+        idPuestoEmpleado = con.idPuestoEmpleado;
+        nombreCompletoEmpleado = con.nombreCompletoEmpleado;
+        numeroIdentidadEmpleado = con.numeroIdentidadEmpleado;
+        
+        if(idPuestoEmpleado == 2){
+            btnGenerarReporte.setEnabled(false);
+            btnUsuario.setEnabled(false);
+        }
+    }
     
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -77,6 +92,11 @@ public class Menu extends javax.swing.JFrame {
 
         btnUsuario.setIcon(new javax.swing.ImageIcon(getClass().getResource("/proyectocasaempeños/Imágenes/empleado.png"))); // NOI18N
         btnUsuario.setText("Usuario");
+        btnUsuario.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnUsuarioActionPerformed(evt);
+            }
+        });
         pnlPrincipal.add(btnUsuario, new org.netbeans.lib.awtextra.AbsoluteConstraints(514, 128, 248, -1));
 
         btnIngresarCompra.setIcon(new javax.swing.ImageIcon(getClass().getResource("/proyectocasaempeños/Imágenes/compra.png"))); // NOI18N
@@ -125,6 +145,11 @@ public class Menu extends javax.swing.JFrame {
 
         btnIngresarCliente.setIcon(new javax.swing.ImageIcon(getClass().getResource("/proyectocasaempeños/Imágenes/nuevo-usuario.png"))); // NOI18N
         btnIngresarCliente.setText("Ingresar cliente");
+        btnIngresarCliente.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnIngresarClienteActionPerformed(evt);
+            }
+        });
         pnlPrincipal.add(btnIngresarCliente, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 6, 248, -1));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -167,7 +192,7 @@ public class Menu extends javax.swing.JFrame {
         
         IngresarCompras ingresarCompras = new IngresarCompras();
         
-        ingresarCompras.idEmpleado = idEmpleado;
+        //ingresarCompras.idEmpleado = idEmpleado;
         ingresarCompras.setVisible(true);
         
         this.dispose();
@@ -175,12 +200,31 @@ public class Menu extends javax.swing.JFrame {
 
     private void btnInventarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnInventarioActionPerformed
         
-        System.out.println(numeroIdentidadEmpleado);
+        Inventario inv = new Inventario();
+        inv.setVisible(true);
+        this.dispose();
+        
     }//GEN-LAST:event_btnInventarioActionPerformed
 
     private void btnPagarEmpeñoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPagarEmpeñoActionPerformed
-        // TODO add your handling code here:
+        PagarObjeto pagar = new PagarObjeto();
+        
+        pagar.setVisible(true);
+        
+        this.dispose();
     }//GEN-LAST:event_btnPagarEmpeñoActionPerformed
+
+    private void btnIngresarClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnIngresarClienteActionPerformed
+        Clientes clientes = new Clientes();
+        clientes.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_btnIngresarClienteActionPerformed
+
+    private void btnUsuarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUsuarioActionPerformed
+        FrmEmpleados empleados = new FrmEmpleados();
+        empleados.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_btnUsuarioActionPerformed
 
     /**
      * @param args the command line arguments
@@ -230,7 +274,7 @@ public class Menu extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
-    public static javax.swing.JLabel lblUsuarioLinea;
+    private javax.swing.JLabel lblUsuarioLinea;
     private javax.swing.JPanel pnlPrincipal;
     // End of variables declaration//GEN-END:variables
 }

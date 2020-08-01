@@ -127,7 +127,7 @@
                   <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" max="-2" attributes="0">
                       <Component id="chkMostrarContrasena" max="32767" attributes="0"/>
-                      <Component id="pswContrasena" pref="25" max="32767" attributes="0"/>
+                      <Component id="pswContrasena" max="32767" attributes="0"/>
                   </Group>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Component id="btnIngresar" min="-2" max="-2" attributes="0"/>
@@ -163,9 +163,6 @@
           </Events>
         </Component>
         <Component class="javax.swing.JPasswordField" name="pswContrasena">
-          <Properties>
-            <Property name="echoChar" type="char" value="&#x25cf;"/>
-          </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel4">
           <Properties>
@@ -180,7 +177,7 @@
             <Property name="text" type="java.lang.String" value="&#xbf;Olvidaste tu contrase&#xf1;a?"/>
             <Property name="toolTipText" type="java.lang.String" value=""/>
             <Property name="cursor" type="java.awt.Cursor" editor="org.netbeans.modules.form.editors2.CursorEditor">
-              <Color id="Hand Cursor"/>
+              <Color id="Cursor Por defecto"/>
             </Property>
           </Properties>
           <Events>

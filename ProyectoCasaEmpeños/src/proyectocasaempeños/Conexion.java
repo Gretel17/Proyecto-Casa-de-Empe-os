@@ -45,8 +45,8 @@ public class Conexion
     
     private static final String driver = "com.mysql.jdbc.Driver";
     private static final String user = "root";
-    private static final String pass = "";
-    private static final String url = "jdbc:mysql://localhost:3307/bdd_poo";
+    private static final String pass = "123456";
+    private static final String url = "jdbc:mysql://localhost:3306/bdd_poo";
     
     public static Integer idEmpleado, idPuestoEmpleado;
     public static String numeroIdentidadEmpleado;
@@ -715,7 +715,7 @@ public class Conexion
     ///////////////////////////////////
      ///CLIENTES
      
-     public void Mantenimiento_Clientes(String accion, Integer id_cliente, String identidad, String nombre, String apellido, String telefono, String correo, String direccion)
+     public void Mantenimiento_Clientes(String accion, Integer id_cliente, String identidad, String nombre, String apellido, String telefono, String correo, String direccion, String usuario)
      {
         String estado = "";
         
@@ -723,7 +723,7 @@ public class Conexion
         {
             String query;
             Conexion.con = (Connection) DriverManager.getConnection(Conexion.url, Conexion.user, Conexion.pass);
-            query = "{CALL Mantenimiento_clientes(?, ?, ?, ?, ?, ?, ?, ?)}";
+            query = "{CALL Mantenimiento_clientes(?, ?, ?, ?, ?, ?, ?, ?, ?)}";
             CallableStatement cs = con.prepareCall(query);
             cs.setString(1, accion);
             cs.setInt   (2, id_cliente);
@@ -733,6 +733,7 @@ public class Conexion
             cs.setString(6, telefono);
             cs.setString(7, correo);
             cs.setString(8, direccion);
+            cs.setString(9, usuario);
             cs.executeUpdate();
         }
         catch (SQLException e){
@@ -1045,5 +1046,100 @@ public class Conexion
             
             JOptionPane.showMessageDialog(null, e);
         }
+    }
+    
+    
+    public void llenarTablaContratos(JTable tablaContratos) 
+    { 
+        String estado = ""; 
+         
+        try 
+        { 
+            Conexion.con = (com.mysql.jdbc.Connection) DriverManager.getConnection(Conexion.url, Conexion.user, Conexion.pass); 
+            Conexion.stm = con.createStatement(); 
+            Conexion.rss = stm.executeQuery("select a.id_contrato, b.identidad, b.nombre, b.apellido, a.fecha_contrato, DATE_ADD(a.fecha_contrato,INTERVAL 30 DAY) fecha_final, a.monto_acordado  from contratos a inner join clientes b on a.id_cliente = b.id_cliente inner join estado c on a.id_estado = c.id_estado where a.id_estado = 1;"); 
+            DefaultTableModel modelo = (DefaultTableModel) tablaContratos.getModel(); 
+             
+            while (rss.next()) 
+            { 
+                Object [] fila = new Object[7]; 
+                 
+                for (int i = 0; i<7; i++) 
+                { 
+                    fila[i] = rss.getObject(i+1); 
+                } 
+ 
+                modelo.addRow(fila);               
+            } 
+                     
+            tablaContratos.setModel(modelo); 
+            con.close();
+        } 
+        catch (SQLException e){ 
+            estado = "Error de Conexion: " + e.toString(); 
+            JOptionPane.showMessageDialog(null, estado); 
+        } 
+    }
+    
+    public void llenarTablaDetalleContratos(JTable tablaDetalleContratos, Integer idContrato) 
+    { 
+        String estado = ""; 
+         
+        try 
+        { 
+            Conexion.con = (com.mysql.jdbc.Connection) DriverManager.getConnection(Conexion.url, Conexion.user, Conexion.pass); 
+            Conexion.stm = con.createStatement(); 
+            Conexion.rss = stm.executeQuery("select a.id_producto, a.descripcion, a.cantidad_disponible from inventario a inner join detalle_contratos b on a.id_producto = b.id_producto inner join contratos c on b.id_contrato = c.id_contrato where c.id_contrato = "+idContrato+";"); 
+            DefaultTableModel modelo = (DefaultTableModel) tablaDetalleContratos.getModel(); 
+             
+            while (rss.next()) 
+            { 
+                Object [] fila = new Object[3]; 
+                 
+                for (int i = 0; i<3; i++) 
+                { 
+                    fila[i] = rss.getObject(i+1); 
+                } 
+ 
+                modelo.addRow(fila);               
+            } 
+                     
+            tablaDetalleContratos.setModel(modelo); 
+            con.close();
+        } 
+        catch (SQLException e){ 
+            estado = "Error de Conexion: " + e.toString(); 
+            JOptionPane.showMessageDialog(null, estado); 
+        } 
+    }
+    
+    
+    public void PagarEmpeño(Integer contrato){
+                
+        String mensaje = "";
+        
+        PreparedStatement pstm = null;
+        
+        try
+        {
+            
+            this.con = (Connection) DriverManager.getConnection(this.url, this.user, this.pass); 
+            pstm = con.prepareStatement("UPDATE contratos SET id_estado = 7 WHERE id_contrato = ?");
+            
+            pstm.setInt(1, contrato);
+
+            
+            Integer retorno = pstm.executeUpdate();
+            
+            if(retorno>0)
+                mensaje="Empeño pagado.";            
+            
+            con.close();
+        }
+        catch (SQLException e){
+            mensaje="Error de conexion: " + e;
+        }
+        
+        JOptionPane.showMessageDialog(null, mensaje);
     }
 }

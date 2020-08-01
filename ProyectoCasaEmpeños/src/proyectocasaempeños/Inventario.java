@@ -75,7 +75,7 @@ public class Inventario extends javax.swing.JFrame {
         lblAvisoCantidad = new javax.swing.JLabel();
         btnConsultar = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Consultar/modificar objetos");
 
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -279,8 +279,9 @@ public class Inventario extends javax.swing.JFrame {
     }//GEN-LAST:event_btnCancelarActionPerformed
 
     private void btnVolverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVolverActionPerformed
-        
-       
+        Menu menu = new Menu();
+        menu.setVisible(true);
+        this.dispose();
     }//GEN-LAST:event_btnVolverActionPerformed
 
     private void btnModificarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnModificarActionPerformed
@@ -299,7 +300,7 @@ public class Inventario extends javax.swing.JFrame {
                     this.txtCantidad.requestFocus();
                 }else{
                     Clear_Table();
-                    con.modificar(this.txtNombreProducto.getText(), Integer.parseInt(this.txtCantidad.getText()), Integer.parseInt(this.txtPrecioVenta.getText()), con.obtenerCodigoCmbEstadoObjetos(this.cmbEstado.getSelectedItem().toString())/*this.cmbEstado.getSelectedIndex()+6*/, "luis", this.fechaActual, this.codigo);
+                    con.modificar(this.txtNombreProducto.getText(), Integer.parseInt(this.txtCantidad.getText()), Integer.parseInt(this.txtPrecioVenta.getText()), con.obtenerCodigoCmbEstadoObjetos(this.cmbEstado.getSelectedItem().toString())/*this.cmbEstado.getSelectedIndex()+6*/, con.nombreCompletoEmpleado, this.fechaActual, this.codigo);
                     con.llenarTablaInventario(tblInventario);
                     this.txtNombreProducto.setText(null);
                     this.txtPrecioVenta.setText(null);

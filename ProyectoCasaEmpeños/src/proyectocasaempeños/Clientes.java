@@ -115,11 +115,12 @@ public class Clientes extends javax.swing.JFrame {
         tableClientes = new javax.swing.JTable();
         jScrollPane1 = new javax.swing.JScrollPane();
         txtDireccion = new javax.swing.JTextArea();
+        btnVolver = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jLabel1.setFont(new java.awt.Font("Century Gothic", 1, 18)); // NOI18N
-        jLabel1.setText("Ingresar/Modificar/Elminar/Consultar Clientes");
+        jLabel1.setText("Ingresar/Modificar/Eliminar/Consultar Clientes");
 
         jLabel2.setFont(new java.awt.Font("Century Gothic", 1, 14)); // NOI18N
         jLabel2.setText("Identidad:");
@@ -137,6 +138,9 @@ public class Clientes extends javax.swing.JFrame {
         });
 
         txtNombre.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtNombreKeyReleased(evt);
+            }
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 txtNombreKeyTyped(evt);
             }
@@ -259,13 +263,21 @@ public class Clientes extends javax.swing.JFrame {
         txtDireccion.setRows(5);
         jScrollPane1.setViewportView(txtDireccion);
 
+        btnVolver.setFont(new java.awt.Font("Century Gothic", 1, 14)); // NOI18N
+        btnVolver.setText("Regresar");
+        btnVolver.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnVolverActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(29, 29, 29)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(btnIngresar)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -274,7 +286,6 @@ public class Clientes extends javax.swing.JFrame {
                         .addComponent(btnEliminar)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnCancelar))
-                    .addComponent(jLabel1)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(10, 10, 10)
                         .addComponent(jLabel3)
@@ -308,15 +319,22 @@ public class Clientes extends javax.swing.JFrame {
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                             .addComponent(txtBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 409, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                            .addComponent(btnLimpiar))))
+                            .addComponent(btnLimpiar)))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addComponent(btnVolver)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jLabel1)
+                        .addGap(66, 66, 66)))
                 .addContainerGap(34, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(25, 25, 25)
-                .addComponent(jLabel1)
-                .addGap(33, 33, 33)
+                .addGap(22, 22, 22)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel1)
+                    .addComponent(btnVolver, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(29, 29, 29)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
                     .addComponent(txtIdentidad, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -379,7 +397,7 @@ public class Clientes extends javax.swing.JFrame {
         
         
         
-        if(this.txtIdentidad.getText().isEmpty() || this.txtNombre.getText().isEmpty() || this.txtApellido.getText().isEmpty() || this.txtTelefono.getText().isEmpty() || this.txtCorreo.getText().isEmpty() || this.txtDireccion.getText().isEmpty()){
+        if(this.txtIdentidad.getText().trim().isEmpty() || this.txtNombre.getText().trim().isEmpty() || this.txtApellido.getText().trim().isEmpty() || this.txtTelefono.getText().trim().isEmpty() || this.txtCorreo.getText().trim().isEmpty() || this.txtDireccion.getText().trim().isEmpty()){
             JOptionPane.showMessageDialog(this, "Favor llenar todos lo campos a modo que no dejo ninguno vacio.");
         }
         else{
@@ -387,7 +405,7 @@ public class Clientes extends javax.swing.JFrame {
             {
                 if (val.ValidarCorreo(this.txtCorreo.getText()) == true){
                     conexion.Mantenimiento_Clientes("insertar", 0, this.txtIdentidad.getText(), this.txtNombre.getText(), this.txtApellido.getText(),
-                                            this.txtTelefono.getText(), this.txtCorreo.getText(), this.txtDireccion.getText());
+                                            this.txtTelefono.getText(), this.txtCorreo.getText(), this.txtDireccion.getText(), conexion.numeroIdentidadEmpleado);
                     this.actualizarTabla();
                     this.limpiarTextos();
                 }
@@ -432,7 +450,7 @@ public class Clientes extends javax.swing.JFrame {
             if (conexion.ValidarEditarCamposRepetidosClientes(this.Id_cliente, this.txtIdentidad.getText(), this.txtNombre.getText(), this.txtApellido.getText(), this.txtCorreo.getText()) == false){
                 if (val.ValidarCorreo(this.txtCorreo.getText()) == true)
                 {   
-                    conexion.Mantenimiento_Clientes("editar", this.Id_cliente, this.txtIdentidad.getText(), this.txtNombre.getText(), this.txtApellido.getText(), this.txtTelefono.getText(), this.txtCorreo.getText(), this.txtDireccion.getText());
+                    conexion.Mantenimiento_Clientes("editar", this.Id_cliente, this.txtIdentidad.getText(), this.txtNombre.getText(), this.txtApellido.getText(), this.txtTelefono.getText(), this.txtCorreo.getText(), this.txtDireccion.getText(), conexion.numeroIdentidadEmpleado);
                     this.actualizarTabla();
                     this.limpiarTextos();
                     this.btnEditar.setEnabled(false);
@@ -448,7 +466,7 @@ public class Clientes extends javax.swing.JFrame {
     private void btnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarActionPerformed
         // TODO add your handling code here:
         Conexion con = new Conexion();
-        con.Mantenimiento_Clientes("eliminar", this.Id_cliente, this.txtIdentidad.getText(), this.txtNombre.getText(), this.txtApellido.getText(), this.txtTelefono.getText(), this.txtCorreo.getText(), this.txtDireccion.getText());
+        con.Mantenimiento_Clientes("eliminar", this.Id_cliente, this.txtIdentidad.getText(), this.txtNombre.getText(), this.txtApellido.getText(), this.txtTelefono.getText(), this.txtCorreo.getText(), this.txtDireccion.getText(), con.numeroIdentidadEmpleado);
         this.actualizarTabla();
         this.limpiarTextos();
         
@@ -528,6 +546,16 @@ public class Clientes extends javax.swing.JFrame {
         
     }//GEN-LAST:event_txtIdentidadKeyReleased
 
+    private void btnVolverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVolverActionPerformed
+        Menu menu = new Menu();
+        menu.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_btnVolverActionPerformed
+
+    private void txtNombreKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtNombreKeyReleased
+        
+    }//GEN-LAST:event_txtNombreKeyReleased
+
     /**
      * @param args the command line arguments
      */
@@ -569,6 +597,7 @@ public class Clientes extends javax.swing.JFrame {
     private javax.swing.JButton btnEliminar;
     private javax.swing.JButton btnIngresar;
     private javax.swing.JButton btnLimpiar;
+    private javax.swing.JButton btnVolver;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;

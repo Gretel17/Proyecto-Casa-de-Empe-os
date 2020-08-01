@@ -180,19 +180,7 @@ public class InicioSesion extends javax.swing.JFrame {
         if( conexion.ingresarInicioSesion( this.txtNombreUsuario.getText(), this.pswContrasena.getText() ) ){
             
             Menu menu = new Menu();
-            
-            if( conexion.idPuestoEmpleado == 2 ){
-                
-                Menu.btnGenerarReporte.setEnabled(false);
-                Menu.btnUsuario.setEnabled(false);
-            }
-            
-            Menu.idEmpleado = conexion.idEmpleado;
-            Menu.numeroIdentidadEmpleado = conexion.numeroIdentidadEmpleado;
-            Menu.idPuestoEmpleado = conexion.idPuestoEmpleado;
-            
-            Menu.lblUsuarioLinea.setText( conexion.nombreCompletoEmpleado );
-            
+                   
             menu.setVisible( true );
             
             this.dispose();

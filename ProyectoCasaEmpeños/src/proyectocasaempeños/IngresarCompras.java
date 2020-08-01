@@ -23,7 +23,7 @@ public class IngresarCompras extends javax.swing.JFrame {
         DeshabilitarCopiarPegar();
     }
     
-    public static Integer idEmpleado;
+    //public static Integer idEmpleado;
     Conexion conexion = new Conexion();
     int totalCompra=0;
     boolean indicadorIngresarNuevoCliente = false,
@@ -468,7 +468,7 @@ public class IngresarCompras extends javax.swing.JFrame {
                         
                         conexion.ingresarCliente( this.txtNumeroIdentidadCliente.getText(), this.txtNombreCliente.getText(), this.txtApellidoCliente.getText(), "2" );
                         conexion.ingresarCompraInventario( this.tblComprasIngresar );
-                        conexion.ingresarCompra( conexion.obtenerCodigoClienteIngresar( this.txtNumeroIdentidadCliente.getText() ), idEmpleado.toString() );
+                        conexion.ingresarCompra( conexion.obtenerCodigoClienteIngresar( this.txtNumeroIdentidadCliente.getText() ), conexion.idEmpleado.toString() );
                         conexion.ingresarDetallesCompra( this.tblComprasIngresar );
                         
                         if( this.chkGerarFactura.isSelected() ){
@@ -504,7 +504,7 @@ public class IngresarCompras extends javax.swing.JFrame {
             if( validarAgregarProducto ){
                 
                 conexion.ingresarCompraInventario( this.tblComprasIngresar );
-                conexion.ingresarCompra( conexion.obtenerCodigoClienteIngresar( this.txtNumeroIdentidadCliente.getText() ), idEmpleado.toString() );
+                conexion.ingresarCompra( conexion.obtenerCodigoClienteIngresar( this.txtNumeroIdentidadCliente.getText() ), conexion.idEmpleado.toString() );
                 conexion.ingresarDetallesCompra( this.tblComprasIngresar );
                 
                 if( this.chkGerarFactura.isSelected() ){
@@ -575,7 +575,8 @@ public class IngresarCompras extends javax.swing.JFrame {
             
             modeloTabla.removeRow(this.tblComprasIngresar.getSelectedRow());
         }
-        else if( this.tblComprasIngresar.getRowCount() == 0 ){
+        
+        if( this.tblComprasIngresar.getRowCount() == 0 ){
             
             validarAgregarProducto = false;
         }
